@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  qa-services:
+    build: .
+    ports:
+      - "3000:80"
+    restart: unless-stopped
+    container_name: qa-services-app
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./logs:/var/log/nginx
+    networks:
+      - qa-network
+
+networks:
+  qa-network:
+    driver: bridge 

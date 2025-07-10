@@ -1,0 +1,56 @@
+const express = require('express');
+const { body } = require('express-validator');
+const { birthdayController } = require('../controllers');
+const { auth, requireRole } = require('../middleware/auth');
+
+const router = express.Router();
+
+// Validação para criação/edição de aniversariantes
+const birthdayValidation = [
+  body('name')
+    .isLength({ min: 2, max: 100 })
+    .withMessage('Nome deve ter entre 2 e 100 caracteres'),
+  body('birth_date')
+    .isISO8601()
+    .withMessage('Data de nascimento deve ser uma data válida'),
+  body('is_active')
+    .optional()
+    .isBoolean()
+    .withMessage('Status ativo deve ser booleano'),
+  body('family_member')
+    .optional()
+    .isLength({ max: 100 })
+    .withMessage('Nome do familiar deve ter no máximo 100 caracteres'),
+  body('notes')
+    .optional()
+    .isLength({ max: 500 })
+    .withMessage('Observações devem ter no máximo 500 caracteres')
+];
+
+// Rotas públicas
+router.get('/', birthdayController.getAll);
+router.get('/active', (req, res) => {
+  req.query.is_active = 'true';
+  birthdayController.getAll(req, res);
+});
+router.get('/this-month', (req, res) => {
+  const currentMonth = new Date().getMonth() + 1;
+  req.query.month = currentMonth.toString();
+  req.query.is_active = 'true';
+  birthdayController.getAll(req, res);
+});
+router.get('/next-month', (req, res) => {
+  const nextMonth = (new Date().getMonth() + 2) % 12 || 12;
+  req.query.month = nextMonth.toString();
+  req.query.is_active = 'true';
+  birthdayController.getAll(req, res);
+});
+
+// Rotas protegidas (admin/editor)
+router.get('/admin', auth, requireRole(['admin', 'editor']), birthdayController.getAll);
+router.get('/:id', auth, requireRole(['admin', 'editor']), birthdayController.getById);
+router.post('/', auth, requireRole(['admin', 'editor']), birthdayValidation, birthdayController.create);
+router.put('/:id', auth, requireRole(['admin', 'editor']), birthdayValidation, birthdayController.update);
+router.delete('/:id', auth, requireRole(['admin']), birthdayController.remove);
+
+module.exports = router; 
