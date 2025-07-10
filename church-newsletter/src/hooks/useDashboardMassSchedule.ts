@@ -7,13 +7,34 @@ export const useDashboardMassSchedule = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchMassSchedules = useCallback(async () => {
+  const fetchAllMassSchedules = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await apiService.getMassSchedule();
-      if (response.success && response.data) {
-        setMassSchedules(Array.isArray(response.data) ? response.data : []);
+      let allMassSchedules: MassSchedule[] = [];
+      let currentPage = 1;
+      let hasMorePages = true;
+
+      // Buscar todas as páginas
+      while (hasMorePages) {
+        const response = await apiService.getMassSchedule({ page: currentPage, limit: 100 });
+        
+        if (response.success && response.data) {
+          const pageData = Array.isArray(response.data) ? response.data : [];
+          allMassSchedules = [...allMassSchedules, ...pageData];
+          
+          // Verificar se há mais páginas
+          if (response.pagination) {
+            hasMorePages = currentPage < response.pagination.pages;
+            currentPage++;
+          } else {
+            hasMorePages = false;
+          }
+        } else {
+          hasMorePages = false;
+        }
       }
+
+      setMassSchedules(allMassSchedules);
       setError(null);
     } catch (err) {
       console.error('Erro ao carregar horários de missa:', err);
@@ -27,7 +48,7 @@ export const useDashboardMassSchedule = () => {
     try {
       const response = await apiService.createMassSchedule(massScheduleData);
       if (response.success) {
-        await fetchMassSchedules(); // Recarregar lista
+        await fetchAllMassSchedules(); // Recarregar lista completa
         return { success: true };
       }
       return { success: false, error: response.message };
@@ -35,13 +56,13 @@ export const useDashboardMassSchedule = () => {
       console.error('Erro ao criar horário de missa:', err);
       return { success: false, error: 'Erro ao criar horário de missa' };
     }
-  }, [fetchMassSchedules]);
+  }, [fetchAllMassSchedules]);
 
   const updateMassSchedule = useCallback(async (id: string, massScheduleData: Partial<MassSchedule>) => {
     try {
       const response = await apiService.updateMassSchedule(id, massScheduleData);
       if (response.success) {
-        await fetchMassSchedules(); // Recarregar lista
+        await fetchAllMassSchedules(); // Recarregar lista completa
         return { success: true };
       }
       return { success: false, error: response.message };
@@ -49,13 +70,13 @@ export const useDashboardMassSchedule = () => {
       console.error('Erro ao atualizar horário de missa:', err);
       return { success: false, error: 'Erro ao atualizar horário de missa' };
     }
-  }, [fetchMassSchedules]);
+  }, [fetchAllMassSchedules]);
 
   const deleteMassSchedule = useCallback(async (id: string) => {
     try {
       const response = await apiService.deleteMassSchedule(id);
       if (response.success) {
-        await fetchMassSchedules(); // Recarregar lista
+        await fetchAllMassSchedules(); // Recarregar lista completa
         return { success: true };
       }
       return { success: false, error: response.message };
@@ -63,17 +84,17 @@ export const useDashboardMassSchedule = () => {
       console.error('Erro ao excluir horário de missa:', err);
       return { success: false, error: 'Erro ao excluir horário de missa' };
     }
-  }, [fetchMassSchedules]);
+  }, [fetchAllMassSchedules]);
 
   useEffect(() => {
-    fetchMassSchedules();
-  }, [fetchMassSchedules]);
+    fetchAllMassSchedules();
+  }, [fetchAllMassSchedules]);
 
   return {
     massSchedules,
     loading,
     error,
-    fetchMassSchedules,
+    fetchMassSchedules: fetchAllMassSchedules,
     createMassSchedule,
     updateMassSchedule,
     deleteMassSchedule

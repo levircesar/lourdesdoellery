@@ -1,35 +1,297 @@
-
 const ParishPage = () => {
-  // Função removida: getSectionTitle
+  const priests = [
+    {
+      id: 1,
+      name: "Pe. João Silva",
+      role: "Pároco",
+      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=500&fit=crop&crop=face",
+      description: "Ordenado em 2010, dedica-se ao ministério paroquial com amor e dedicação. Especialista em teologia pastoral e apaixonado pela juventude.",
+      specialties: ["Pastoral Juvenil", "Teologia", "Aconselhamento"]
+    },
+    {
+      id: 2,
+      name: "Pe. Carlos Oliveira",
+      role: "Vigário",
+      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=500&fit=crop&crop=face",
+      description: "Missionário por vocação, trabalha incansavelmente pela evangelização e formação de líderes comunitários.",
+      specialties: ["Missões", "Formação", "Comunidade"]
+    }
+  ];
+
+  const deacons = [
+    {
+      id: 1,
+      name: "Diácono José Santos",
+      role: "Diácono Permanente",
+      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=500&fit=crop&crop=face",
+      description: "Servidor dedicado da comunidade, coordena ações sociais e ministra o batismo e matrimônio.",
+      specialties: ["Ação Social", "Liturgia", "Família"]
+    },
+    {
+      id: 2,
+      name: "Diácono Pedro Costa",
+      role: "Diácono Permanente",
+      image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=500&fit=crop&crop=face",
+      description: "Especialista em catequese e formação de adultos, dedica-se ao ensino da doutrina cristã.",
+      specialties: ["Catequese", "Formação", "Ensino"]
+    }
+  ];
+
+  const projects = [
+    {
+      id: 1,
+      name: "Coroinhas",
+      icon: "🕯️",
+      description: "Grupo de crianças e adolescentes que servem na liturgia, aprendendo sobre fé e responsabilidade.",
+      activities: ["Serviço na Missa", "Formação Espiritual", "Retiros", "Atividades Recreativas"]
+    },
+    {
+      id: 2,
+      name: "Pastoral da Criança",
+      icon: "👶",
+      description: "Dedica-se ao cuidado e desenvolvimento integral das crianças e suas famílias.",
+      activities: ["Visitas Domiciliares", "Celebração da Vida", "Orientação Nutricional", "Acompanhamento"]
+    },
+    {
+      id: 3,
+      name: "Pastoral da Juventude",
+      icon: "🙋‍♂️",
+      description: "Espaço de formação e evangelização para jovens, promovendo protagonismo juvenil.",
+      activities: ["Encontros Semanais", "Retiros", "Missões", "Ações Sociais"]
+    },
+    {
+      id: 4,
+      name: "Pastoral da Família",
+      icon: "👨‍👩‍👧‍👦",
+      description: "Apoia e fortalece as famílias através de encontros, formações e aconselhamento.",
+      activities: ["Encontros de Casais", "Formação", "Aconselhamento", "Celebrações"]
+    },
+    {
+      id: 5,
+      name: "Pastoral da Caridade",
+      icon: "❤️",
+      description: "Promove ações de caridade e solidariedade, atendendo aos mais necessitados.",
+      activities: ["Distribuição de Alimentos", "Visitas aos Enfermos", "Campanhas", "Apoio Social"]
+    },
+    {
+      id: 6,
+      name: "Coral Paroquial",
+      icon: "🎵",
+      description: "Ministério de música que anima as celebrações e forma músicos para a liturgia.",
+      activities: ["Ensaios Semanais", "Apresentações", "Formação Musical", "Festivais"]
+    }
+  ];
 
   return (
-    <div className="min-h-screen bg-white pt-16">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <h1 className="text-4xl font-bold text-church-blue mb-8">Sobre a Paróquia</h1>
-        <div className="prose prose-lg max-w-none">
-          <p>
-            Bem-vindo à Paróquia Nossa Senhora de Lourdes - Ellery! Somos uma comunidade de fé dedicada ao serviço, à evangelização e à promoção dos valores cristãos. Nossa missão é acolher, evangelizar e servir a todos, promovendo a comunhão e o crescimento espiritual.
-          </p>
-          <h2>História</h2>
-          <p>
-            Fundada em 1960, nossa paróquia tem uma longa trajetória de serviço à comunidade, com celebrações, eventos sociais, grupos de oração e atividades pastorais.
-          </p>
-          <h2>Missão</h2>
-          <p>
-            Nossa missão é ser uma igreja acolhedora, missionária e comprometida com a transformação social, inspirada pelo exemplo de Nossa Senhora de Lourdes.
-          </p>
-          <h2>Equipe Pastoral</h2>
-          <ul>
-            <li>Pe. João Silva (Pároco)</li>
-            <li>Pe. Carlos Oliveira (Vigário)</li>
-            <li>Equipe de Ministros, Catequistas e Voluntários</li>
-          </ul>
-          <h2>Instalações</h2>
-          <p>
-            Nossa paróquia conta com igreja matriz, capelas, salão paroquial, secretaria, salas de catequese e espaços para eventos.
-          </p>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      {/* Hero Section */}
+      <div className="relative h-96 bg-gradient-to-r from-blue-600 to-purple-700 overflow-hidden">
+        <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-center text-white z-10">
+            <h1 className="text-5xl md:text-6xl font-bold mb-4 animate-fade-in">
+              Conhecendo a Paróquia
+            </h1>
+            <p className="text-xl md:text-2xl font-light animate-fade-in-delay">
+              Nossa Senhora de Lourdes - Ellery
+            </p>
+          </div>
+        </div>
+        {/* Decorative elements */}
+        <div className="absolute top-10 left-10 text-white text-6xl opacity-20">✝️</div>
+        <div className="absolute bottom-10 right-10 text-white text-6xl opacity-20">🙏</div>
+      </div>
+
+      {/* Introduction Section */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl font-bold text-gray-800 mb-6">
+            Bem-vindo à Nossa Comunidade
+          </h2>
+          <div className="max-w-4xl mx-auto">
+            <p className="text-lg text-gray-600 leading-relaxed mb-6">
+              Fundada em 1960, nossa paróquia é uma comunidade de fé dedicada ao serviço, 
+              à evangelização e à promoção dos valores cristãos. Inspirados por Nossa Senhora de Lourdes, 
+              buscamos acolher, evangelizar e servir a todos, promovendo a comunhão e o crescimento espiritual.
+            </p>
+            <p className="text-lg text-gray-600 leading-relaxed">
+              Nossa missão é ser uma igreja acolhedora, missionária e comprometida com a transformação social, 
+              sempre guiada pelos ensinamentos de Cristo e pela intercessão de Maria.
+            </p>
+          </div>
+        </div>
+
+        {/* Nossa Senhora de Lourdes Section */}
+        <div className="bg-white rounded-2xl shadow-xl p-8 mb-16 transform hover:scale-105 transition-transform duration-300">
+          <div className="grid md:grid-cols-2 gap-8 items-center">
+            <div className="text-center md:text-left">
+              <h3 className="text-3xl font-bold text-blue-600 mb-4">
+                Nossa Senhora de Lourdes
+              </h3>
+              <p className="text-gray-600 leading-relaxed mb-4">
+                Nossa padroeira, que apareceu a Santa Bernadette em 1858, nos inspira com sua mensagem 
+                de conversão, penitência e oração. Sua intercessão fortalece nossa comunidade e nos 
+                guia no caminho da fé.
+              </p>
+              <p className="text-gray-600 leading-relaxed">
+                "Eu sou a Imaculada Conceição" - estas palavras ecoam em nossos corações e nos 
+                lembram da pureza e graça que devemos buscar em nossas vidas.
+              </p>
+            </div>
+            <div className="flex justify-center">
+              <div className="relative">
+                <div className="w-64 h-80 bg-gradient-to-br from-blue-400 to-purple-500 rounded-2xl flex items-center justify-center text-white text-8xl shadow-2xl">
+                  ⛪
+                </div>
+                <div className="absolute -top-4 -right-4 w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center text-2xl animate-pulse">
+                  ✨
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Clergy Section */}
+        <div className="mb-16">
+          <h2 className="text-4xl font-bold text-center text-gray-800 mb-12">
+            Nossa Equipe Pastoral
+          </h2>
+          
+          {/* Priests */}
+          <div className="mb-12">
+            <h3 className="text-3xl font-bold text-blue-600 text-center mb-8">
+              Padres
+            </h3>
+            <div className="grid md:grid-cols-2 gap-8">
+              {priests.map((priest) => (
+                <div key={priest.id} className="bg-white rounded-2xl shadow-lg p-6 transform hover:scale-105 transition-all duration-300">
+                  <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
+                    <div className="relative">
+                      <img 
+                        src={priest.image} 
+                        alt={priest.name}
+                        className="w-32 h-40 object-cover rounded-xl shadow-lg"
+                      />
+                      <div className="absolute -top-2 -right-2 w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                        ✝️
+                      </div>
+                    </div>
+                    <div className="flex-1 text-center md:text-left">
+                      <h4 className="text-2xl font-bold text-gray-800 mb-2">{priest.name}</h4>
+                      <p className="text-blue-600 font-semibold mb-3">{priest.role}</p>
+                      <p className="text-gray-600 mb-4 leading-relaxed">{priest.description}</p>
+                      <div className="flex flex-wrap gap-2 justify-center md:justify-start">
+                        {priest.specialties.map((specialty, index) => (
+                          <span key={index} className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
+                            {specialty}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Deacons */}
+          <div>
+            <h3 className="text-3xl font-bold text-purple-600 text-center mb-8">
+              Diáconos
+            </h3>
+            <div className="grid md:grid-cols-2 gap-8">
+              {deacons.map((deacon) => (
+                <div key={deacon.id} className="bg-white rounded-2xl shadow-lg p-6 transform hover:scale-105 transition-all duration-300">
+                  <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
+                    <div className="relative">
+                      <img 
+                        src={deacon.image} 
+                        alt={deacon.name}
+                        className="w-32 h-40 object-cover rounded-xl shadow-lg"
+                      />
+                      <div className="absolute -top-2 -right-2 w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                        🔷
+                      </div>
+                    </div>
+                    <div className="flex-1 text-center md:text-left">
+                      <h4 className="text-2xl font-bold text-gray-800 mb-2">{deacon.name}</h4>
+                      <p className="text-purple-600 font-semibold mb-3">{deacon.role}</p>
+                      <p className="text-gray-600 mb-4 leading-relaxed">{deacon.description}</p>
+                      <div className="flex flex-wrap gap-2 justify-center md:justify-start">
+                        {deacon.specialties.map((specialty, index) => (
+                          <span key={index} className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium">
+                            {specialty}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Projects Section */}
+        <div>
+          <h2 className="text-4xl font-bold text-center text-gray-800 mb-12">
+            Nossos Projetos e Pastorais
+          </h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {projects.map((project) => (
+              <div key={project.id} className="bg-white rounded-2xl shadow-lg p-6 transform hover:scale-105 transition-all duration-300 hover:shadow-xl">
+                <div className="text-center mb-4">
+                  <div className="text-4xl mb-3">{project.icon}</div>
+                  <h3 className="text-xl font-bold text-gray-800 mb-2">{project.name}</h3>
+                  <p className="text-gray-600 text-sm leading-relaxed">{project.description}</p>
+                </div>
+                <div className="space-y-2">
+                  <h4 className="font-semibold text-gray-700 text-sm">Atividades:</h4>
+                  <ul className="text-sm text-gray-600 space-y-1">
+                    {project.activities.map((activity, index) => (
+                      <li key={index} className="flex items-center">
+                        <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                        {activity}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Call to Action */}
+        <div className="text-center mt-16">
+          <div className="bg-gradient-to-r from-blue-600 to-purple-700 rounded-2xl p-8 text-white">
+            <h3 className="text-3xl font-bold mb-4">
+              Venha Fazer Parte da Nossa Família!
+            </h3>
+            <p className="text-xl mb-6">
+              Junte-se a nós e descubra como sua fé pode florescer em comunidade
+            </p>
+            <button className="bg-white text-blue-600 px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors duration-300">
+              Entre em Contato
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* CSS for animations */}
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          @keyframes fade-in {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          .animate-fade-in {
+            animation: fade-in 1s ease-out;
+          }
+          .animate-fade-in-delay {
+            animation: fade-in 1s ease-out 0.3s both;
+          }
+        `
+      }} />
     </div>
   );
 };

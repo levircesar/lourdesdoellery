@@ -7,13 +7,34 @@ export const useDashboardAnnouncements = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchAnnouncements = useCallback(async () => {
+  const fetchAllAnnouncements = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await apiService.getAnnouncements();
-      if (response.success && response.data) {
-        setAnnouncements(Array.isArray(response.data) ? response.data : []);
+      let allAnnouncements: Announcement[] = [];
+      let currentPage = 1;
+      let hasMorePages = true;
+
+      // Buscar todas as páginas
+      while (hasMorePages) {
+        const response = await apiService.getAnnouncements({ page: currentPage, limit: 100 });
+        
+        if (response.success && response.data) {
+          const pageData = Array.isArray(response.data) ? response.data : [];
+          allAnnouncements = [...allAnnouncements, ...pageData];
+          
+          // Verificar se há mais páginas
+          if (response.pagination) {
+            hasMorePages = currentPage < response.pagination.pages;
+            currentPage++;
+          } else {
+            hasMorePages = false;
+          }
+        } else {
+          hasMorePages = false;
+        }
       }
+
+      setAnnouncements(allAnnouncements);
       setError(null);
     } catch (err) {
       console.error('Erro ao carregar avisos:', err);
@@ -27,7 +48,7 @@ export const useDashboardAnnouncements = () => {
     try {
       const response = await apiService.createAnnouncement(announcementData);
       if (response.success) {
-        await fetchAnnouncements(); // Recarregar lista
+        await fetchAllAnnouncements(); // Recarregar lista completa
         return { success: true };
       }
       return { success: false, error: response.message };
@@ -35,13 +56,13 @@ export const useDashboardAnnouncements = () => {
       console.error('Erro ao criar aviso:', err);
       return { success: false, error: 'Erro ao criar aviso' };
     }
-  }, [fetchAnnouncements]);
+  }, [fetchAllAnnouncements]);
 
   const updateAnnouncement = useCallback(async (id: string, announcementData: Partial<Announcement>) => {
     try {
       const response = await apiService.updateAnnouncement(id, announcementData);
       if (response.success) {
-        await fetchAnnouncements(); // Recarregar lista
+        await fetchAllAnnouncements(); // Recarregar lista completa
         return { success: true };
       }
       return { success: false, error: response.message };
@@ -49,13 +70,13 @@ export const useDashboardAnnouncements = () => {
       console.error('Erro ao atualizar aviso:', err);
       return { success: false, error: 'Erro ao atualizar aviso' };
     }
-  }, [fetchAnnouncements]);
+  }, [fetchAllAnnouncements]);
 
   const deleteAnnouncement = useCallback(async (id: string) => {
     try {
       const response = await apiService.deleteAnnouncement(id);
       if (response.success) {
-        await fetchAnnouncements(); // Recarregar lista
+        await fetchAllAnnouncements(); // Recarregar lista completa
         return { success: true };
       }
       return { success: false, error: response.message };
@@ -63,17 +84,17 @@ export const useDashboardAnnouncements = () => {
       console.error('Erro ao excluir aviso:', err);
       return { success: false, error: 'Erro ao excluir aviso' };
     }
-  }, [fetchAnnouncements]);
+  }, [fetchAllAnnouncements]);
 
   useEffect(() => {
-    fetchAnnouncements();
-  }, [fetchAnnouncements]);
+    fetchAllAnnouncements();
+  }, [fetchAllAnnouncements]);
 
   return {
     announcements,
     loading,
     error,
-    fetchAnnouncements,
+    fetchAnnouncements: fetchAllAnnouncements,
     createAnnouncement,
     updateAnnouncement,
     deleteAnnouncement

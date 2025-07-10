@@ -19,7 +19,7 @@ export const useMassSchedule = () => {
   useEffect(() => {
     const controller = new AbortController();
     
-    axios.get(`${API_BASE_URL}/mass-schedule`, {
+    axios.get(`${API_BASE_URL}/mass-schedule?limit=20`, {
       timeout: 30000,
       signal: controller.signal
     })
@@ -33,8 +33,8 @@ export const useMassSchedule = () => {
       .catch((err: AxiosError) => {
         console.warn('API unavailable, using mock data:', err.message);
         const mockData = Array.isArray(mockMassSchedule) ? mockMassSchedule : [];
-        // Filtrar apenas horários ativos dos dados mock
-        const activeSchedules = mockData.filter(schedule => schedule.is_active);
+        // Filtrar apenas horários ativos dos dados mock (limitado a 20)
+        const activeSchedules = mockData.filter(schedule => schedule.is_active).slice(0, 20);
         setMassSchedules(activeSchedules);
         setLoading(false);
         setError('API unavailable, using mock data');

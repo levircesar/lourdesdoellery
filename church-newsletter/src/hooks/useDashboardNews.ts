@@ -7,13 +7,34 @@ export const useDashboardNews = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchNews = useCallback(async () => {
+  const fetchAllNews = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await apiService.getNews();
-      if (response.success && response.data) {
-        setNews(Array.isArray(response.data) ? response.data : []);
+      let allNews: News[] = [];
+      let currentPage = 1;
+      let hasMorePages = true;
+
+      // Buscar todas as páginas
+      while (hasMorePages) {
+        const response = await apiService.getNews({ page: currentPage, limit: 100 });
+        
+        if (response.success && response.data) {
+          const pageData = Array.isArray(response.data) ? response.data : [];
+          allNews = [...allNews, ...pageData];
+          
+          // Verificar se há mais páginas
+          if (response.pagination) {
+            hasMorePages = currentPage < response.pagination.pages;
+            currentPage++;
+          } else {
+            hasMorePages = false;
+          }
+        } else {
+          hasMorePages = false;
+        }
       }
+
+      setNews(allNews);
       setError(null);
     } catch (err) {
       console.error('Erro ao carregar notícias:', err);
@@ -27,7 +48,7 @@ export const useDashboardNews = () => {
     try {
       const response = await apiService.createNews(newsData);
       if (response.success) {
-        await fetchNews(); // Recarregar lista
+        await fetchAllNews(); // Recarregar lista completa
         return { success: true };
       }
       return { success: false, error: response.message };
@@ -35,13 +56,13 @@ export const useDashboardNews = () => {
       console.error('Erro ao criar notícia:', err);
       return { success: false, error: 'Erro ao criar notícia' };
     }
-  }, [fetchNews]);
+  }, [fetchAllNews]);
 
   const updateNews = useCallback(async (id: string, newsData: Partial<News>) => {
     try {
       const response = await apiService.updateNews(id, newsData);
       if (response.success) {
-        await fetchNews(); // Recarregar lista
+        await fetchAllNews(); // Recarregar lista completa
         return { success: true };
       }
       return { success: false, error: response.message };
@@ -49,13 +70,13 @@ export const useDashboardNews = () => {
       console.error('Erro ao atualizar notícia:', err);
       return { success: false, error: 'Erro ao atualizar notícia' };
     }
-  }, [fetchNews]);
+  }, [fetchAllNews]);
 
   const deleteNews = useCallback(async (id: string) => {
     try {
       const response = await apiService.deleteNews(id);
       if (response.success) {
-        await fetchNews(); // Recarregar lista
+        await fetchAllNews(); // Recarregar lista completa
         return { success: true };
       }
       return { success: false, error: response.message };
@@ -63,13 +84,13 @@ export const useDashboardNews = () => {
       console.error('Erro ao excluir notícia:', err);
       return { success: false, error: 'Erro ao excluir notícia' };
     }
-  }, [fetchNews]);
+  }, [fetchAllNews]);
 
   const publishNews = useCallback(async (id: string) => {
     try {
       const response = await apiService.publishNews(id);
       if (response.success) {
-        await fetchNews(); // Recarregar lista
+        await fetchAllNews(); // Recarregar lista completa
         return { success: true };
       }
       return { success: false, error: response.message };
@@ -77,17 +98,17 @@ export const useDashboardNews = () => {
       console.error('Erro ao publicar notícia:', err);
       return { success: false, error: 'Erro ao publicar notícia' };
     }
-  }, [fetchNews]);
+  }, [fetchAllNews]);
 
   useEffect(() => {
-    fetchNews();
-  }, [fetchNews]);
+    fetchAllNews();
+  }, [fetchAllNews]);
 
   return {
     news,
     loading,
     error,
-    fetchNews,
+    fetchNews: fetchAllNews,
     createNews,
     updateNews,
     deleteNews,

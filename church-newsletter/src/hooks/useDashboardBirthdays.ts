@@ -7,13 +7,34 @@ export const useDashboardBirthdays = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchBirthdays = useCallback(async () => {
+  const fetchAllBirthdays = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await apiService.getBirthdays();
-      if (response.success && response.data) {
-        setBirthdays(Array.isArray(response.data) ? response.data : []);
+      let allBirthdays: Birthday[] = [];
+      let currentPage = 1;
+      let hasMorePages = true;
+
+      // Buscar todas as páginas
+      while (hasMorePages) {
+        const response = await apiService.getBirthdays({ page: currentPage, limit: 100 });
+        
+        if (response.success && response.data) {
+          const pageData = Array.isArray(response.data) ? response.data : [];
+          allBirthdays = [...allBirthdays, ...pageData];
+          
+          // Verificar se há mais páginas
+          if (response.pagination) {
+            hasMorePages = currentPage < response.pagination.pages;
+            currentPage++;
+          } else {
+            hasMorePages = false;
+          }
+        } else {
+          hasMorePages = false;
+        }
       }
+
+      setBirthdays(allBirthdays);
       setError(null);
     } catch (err) {
       console.error('Erro ao carregar aniversariantes:', err);
@@ -27,7 +48,7 @@ export const useDashboardBirthdays = () => {
     try {
       const response = await apiService.createBirthday(birthdayData);
       if (response.success) {
-        await fetchBirthdays(); // Recarregar lista
+        await fetchAllBirthdays(); // Recarregar lista completa
         return { success: true };
       }
       return { success: false, error: response.message };
@@ -35,13 +56,13 @@ export const useDashboardBirthdays = () => {
       console.error('Erro ao criar aniversariante:', err);
       return { success: false, error: 'Erro ao criar aniversariante' };
     }
-  }, [fetchBirthdays]);
+  }, [fetchAllBirthdays]);
 
   const updateBirthday = useCallback(async (id: string, birthdayData: Partial<Birthday>) => {
     try {
       const response = await apiService.updateBirthday(id, birthdayData);
       if (response.success) {
-        await fetchBirthdays(); // Recarregar lista
+        await fetchAllBirthdays(); // Recarregar lista completa
         return { success: true };
       }
       return { success: false, error: response.message };
@@ -49,13 +70,13 @@ export const useDashboardBirthdays = () => {
       console.error('Erro ao atualizar aniversariante:', err);
       return { success: false, error: 'Erro ao atualizar aniversariante' };
     }
-  }, [fetchBirthdays]);
+  }, [fetchAllBirthdays]);
 
   const deleteBirthday = useCallback(async (id: string) => {
     try {
       const response = await apiService.deleteBirthday(id);
       if (response.success) {
-        await fetchBirthdays(); // Recarregar lista
+        await fetchAllBirthdays(); // Recarregar lista completa
         return { success: true };
       }
       return { success: false, error: response.message };
@@ -63,17 +84,17 @@ export const useDashboardBirthdays = () => {
       console.error('Erro ao excluir aniversariante:', err);
       return { success: false, error: 'Erro ao excluir aniversariante' };
     }
-  }, [fetchBirthdays]);
+  }, [fetchAllBirthdays]);
 
   useEffect(() => {
-    fetchBirthdays();
-  }, [fetchBirthdays]);
+    fetchAllBirthdays();
+  }, [fetchAllBirthdays]);
 
   return {
     birthdays,
     loading,
     error,
-    fetchBirthdays,
+    fetchBirthdays: fetchAllBirthdays,
     createBirthday,
     updateBirthday,
     deleteBirthday

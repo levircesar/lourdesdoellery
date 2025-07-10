@@ -7,13 +7,34 @@ export const useDashboardParishInfo = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchParishInfo = useCallback(async () => {
+  const fetchAllParishInfo = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await apiService.getParishInfo();
-      if (response.success && response.data) {
-        setParishInfo(Array.isArray(response.data) ? response.data : []);
+      let allParishInfo: ParishInfo[] = [];
+      let currentPage = 1;
+      let hasMorePages = true;
+
+      // Buscar todas as páginas
+      while (hasMorePages) {
+        const response = await apiService.getParishInfo({ page: currentPage, limit: 100 });
+        
+        if (response.success && response.data) {
+          const pageData = Array.isArray(response.data) ? response.data : [];
+          allParishInfo = [...allParishInfo, ...pageData];
+          
+          // Verificar se há mais páginas
+          if (response.pagination) {
+            hasMorePages = currentPage < response.pagination.pages;
+            currentPage++;
+          } else {
+            hasMorePages = false;
+          }
+        } else {
+          hasMorePages = false;
+        }
       }
+
+      setParishInfo(allParishInfo);
       setError(null);
     } catch (err) {
       console.error('Erro ao carregar informações da paróquia:', err);
@@ -27,7 +48,7 @@ export const useDashboardParishInfo = () => {
     try {
       const response = await apiService.createParishInfo(parishInfoData);
       if (response.success) {
-        await fetchParishInfo(); // Recarregar lista
+        await fetchAllParishInfo(); // Recarregar lista completa
         return { success: true };
       }
       return { success: false, error: response.message };
@@ -35,13 +56,13 @@ export const useDashboardParishInfo = () => {
       console.error('Erro ao criar informação da paróquia:', err);
       return { success: false, error: 'Erro ao criar informação da paróquia' };
     }
-  }, [fetchParishInfo]);
+  }, [fetchAllParishInfo]);
 
   const updateParishInfo = useCallback(async (id: string, parishInfoData: Partial<ParishInfo>) => {
     try {
       const response = await apiService.updateParishInfo(id, parishInfoData);
       if (response.success) {
-        await fetchParishInfo(); // Recarregar lista
+        await fetchAllParishInfo(); // Recarregar lista completa
         return { success: true };
       }
       return { success: false, error: response.message };
@@ -49,13 +70,13 @@ export const useDashboardParishInfo = () => {
       console.error('Erro ao atualizar informação da paróquia:', err);
       return { success: false, error: 'Erro ao atualizar informação da paróquia' };
     }
-  }, [fetchParishInfo]);
+  }, [fetchAllParishInfo]);
 
   const deleteParishInfo = useCallback(async (id: string) => {
     try {
       const response = await apiService.deleteParishInfo(id);
       if (response.success) {
-        await fetchParishInfo(); // Recarregar lista
+        await fetchAllParishInfo(); // Recarregar lista completa
         return { success: true };
       }
       return { success: false, error: response.message };
@@ -63,17 +84,17 @@ export const useDashboardParishInfo = () => {
       console.error('Erro ao excluir informação da paróquia:', err);
       return { success: false, error: 'Erro ao excluir informação da paróquia' };
     }
-  }, [fetchParishInfo]);
+  }, [fetchAllParishInfo]);
 
   useEffect(() => {
-    fetchParishInfo();
-  }, [fetchParishInfo]);
+    fetchAllParishInfo();
+  }, [fetchAllParishInfo]);
 
   return {
     parishInfo,
     loading,
     error,
-    fetchParishInfo,
+    fetchParishInfo: fetchAllParishInfo,
     createParishInfo,
     updateParishInfo,
     deleteParishInfo
