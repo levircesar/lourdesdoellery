@@ -378,21 +378,26 @@ const ParishPage = () => {
         </div>
 
         {/* Galeria de Fotos */}
-        <div className="mb-16">
-          <h2 className="text-4xl font-bold text-center text-gray-800 mb-12">
-            Galeria de Fotos
-          </h2>
+        <div className="mb-20">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-800 mb-6">
+              Galeria de Fotos
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Conheça nossa paróquia através de imagens que capturam a beleza da nossa comunidade e as atividades que realizamos
+            </p>
+          </div>
           
-          {/* Filtros de Categoria */}
-          <div className="flex flex-wrap justify-center gap-4 mb-8">
-            {categories.map((category) => (
+          {/* Filtros de Categoria Simplificados */}
+          <div className="flex flex-wrap justify-center gap-3 mb-12">
+            {categories.slice(0, 6).map((category) => (
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
-                className={`px-6 py-2 rounded-full font-medium transition-all duration-300 ${
+                className={`px-5 py-2.5 rounded-full font-medium transition-all duration-300 text-sm ${
                   selectedCategory === category
-                    ? 'bg-blue-600 text-white shadow-lg'
-                    : 'bg-white text-gray-600 hover:bg-gray-100 shadow-md'
+                    ? 'bg-blue-600 text-white shadow-lg transform scale-105'
+                    : 'bg-white text-gray-600 hover:bg-gray-50 hover:text-blue-600 shadow-md border border-gray-200'
                 }`}
               >
                 {category}
@@ -400,12 +405,12 @@ const ParishPage = () => {
             ))}
           </div>
 
-          {/* Grid de Fotos */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {/* Grid de Fotos Melhorado */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredPhotos.map((photo, index) => (
               <div
                 key={photo.id}
-                className="group relative bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition-all duration-300 cursor-pointer"
+                className="group relative bg-white rounded-2xl shadow-lg overflow-hidden transform hover:scale-105 transition-all duration-500 cursor-pointer hover:shadow-2xl"
                 onClick={() => openGalleryModal(
                   filteredPhotos.map(p => p.image), 
                   index, 
@@ -416,18 +421,18 @@ const ParishPage = () => {
                   <img
                     src={photo.image}
                     alt={photo.title}
-                    className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
+                    className="w-full h-56 object-cover group-hover:scale-110 transition-transform duration-700"
                   />
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-                    <h3 className="font-semibold text-lg mb-1">{photo.title}</h3>
-                    <p className="text-sm opacity-90">{photo.category}</p>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                    <h3 className="font-bold text-xl mb-2">{photo.title}</h3>
+                    <p className="text-sm opacity-90 bg-black/30 px-3 py-1 rounded-full inline-block">{photo.category}</p>
                   </div>
                 </div>
-                <div className="absolute top-3 right-3">
-                  <div className="w-8 h-8 bg-white/90 rounded-full flex items-center justify-center text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    🔍
+                <div className="absolute top-4 right-4">
+                  <div className="w-10 h-10 bg-white/95 rounded-full flex items-center justify-center text-gray-700 opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-75 group-hover:scale-100 shadow-lg">
+                    <span className="text-lg">🔍</span>
                   </div>
                 </div>
               </div>
@@ -435,8 +440,15 @@ const ParishPage = () => {
           </div>
 
           {filteredPhotos.length === 0 && (
-            <div className="text-center py-12">
+            <div className="text-center py-16">
+              <div className="text-6xl mb-4">📷</div>
               <p className="text-gray-500 text-lg">Nenhuma foto encontrada para esta categoria.</p>
+              <button 
+                onClick={() => setSelectedCategory("Todas")}
+                className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors"
+              >
+                Ver todas as fotos
+              </button>
             </div>
           )}
         </div>
