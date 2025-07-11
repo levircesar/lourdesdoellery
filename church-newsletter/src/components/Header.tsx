@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     let lastScrollY = window.scrollY;
@@ -26,6 +27,13 @@ const Header = () => {
   }, []);
 
   const scrollToSection = (sectionId: string) => {
+    // Se não estiver na página inicial, navegar para lá primeiro
+    if (location.pathname !== '/') {
+      navigate('/', { state: { scrollTo: sectionId } });
+      return;
+    }
+
+    // Se já estiver na página inicial, fazer scroll
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
@@ -72,12 +80,12 @@ const Header = () => {
             >
               Horários
             </button>
-            <button
-              onClick={() => scrollToSection('birthdays')}
+            <Link
+              to="/communities"
               className="text-gray-700 hover:text-church-blue transition-colors font-medium"
             >
-              Aniversariantes
-            </button>
+              Comunidades
+            </Link>
             <Link
               to="/parish"
               className="text-gray-700 hover:text-church-blue transition-colors font-medium"
@@ -131,12 +139,12 @@ const Header = () => {
               >
                 Horários
               </button>
-              <button
-                onClick={() => scrollToSection('birthdays')}
+              <Link
+                to="/communities"
                 className="block w-full text-left px-3 py-2 text-gray-700 hover:text-church-blue hover:bg-gray-50 rounded-md font-medium"
               >
-                Aniversariantes
-              </button>
+                Comunidades
+              </Link>
               <Link
                 to="/parish"
                 className="block w-full text-left px-3 py-2 text-gray-700 hover:text-church-blue hover:bg-gray-50 rounded-md font-medium"

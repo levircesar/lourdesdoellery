@@ -3,6 +3,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import Header from './components/Header';
 import HomePage from './pages/HomePage';
 import ParishPage from './pages/ParishPage';
+import CommunitiesPage from './pages/CommunitiesPage';
 import NewsDetailPage from './pages/NewsDetailPage';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
@@ -26,6 +27,13 @@ function App() {
               <>
                 <Header />
                 <ParishPage />
+              </>
+            } />
+            
+            <Route path="/communities" element={
+              <>
+                <Header />
+                <CommunitiesPage />
               </>
             } />
             

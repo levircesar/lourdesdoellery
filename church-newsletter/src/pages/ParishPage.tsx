@@ -1,4 +1,9 @@
+import { useState } from 'react';
+import ImageModal from '../components/ImageModal';
+
 const ParishPage = () => {
+  const [selectedImage, setSelectedImage] = useState<{ images: string[], index: number, title: string } | null>(null);
+
   const priests = [
     {
       id: 1,
@@ -81,6 +86,101 @@ const ParishPage = () => {
       activities: ["Ensaios Semanais", "Apresentações", "Formação Musical", "Festivais"]
     }
   ];
+
+  const openImageModal = (image: string, title: string) => {
+    setSelectedImage({ images: [image], index: 0, title });
+  };
+
+  const openGalleryModal = (images: string[], startIndex: number, title: string) => {
+    setSelectedImage({ images, index: startIndex, title });
+  };
+
+  const closeImageModal = () => {
+    setSelectedImage(null);
+  };
+
+  // Galeria de fotos da paróquia
+  const parishPhotos = [
+    {
+      id: 1,
+      title: "Fachada da Igreja",
+      image: "https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=800&h=600&fit=crop",
+      category: "Igreja"
+    },
+    {
+      id: 2,
+      title: "Altar Principal",
+      image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop",
+      category: "Igreja"
+    },
+    {
+      id: 3,
+      title: "Celebração de Missa",
+      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop",
+      category: "Liturgia"
+    },
+    {
+      id: 4,
+      title: "Batismo",
+      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop",
+      category: "Sacramentos"
+    },
+    {
+      id: 5,
+      title: "Coral Paroquial",
+      image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=600&fit=crop",
+      category: "Música"
+    },
+    {
+      id: 6,
+      title: "Pastoral da Juventude",
+      image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=600&fit=crop",
+      category: "Pastoral"
+    },
+    {
+      id: 7,
+      title: "Ação Social",
+      image: "https://images.unsplash.com/photo-1532629345422-7515f3d16c76?w=800&h=600&fit=crop",
+      category: "Caridade"
+    },
+    {
+      id: 8,
+      title: "Retiro Espiritual",
+      image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop",
+      category: "Formação"
+    },
+    {
+      id: 9,
+      title: "Festa da Padroeira",
+      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop",
+      category: "Eventos"
+    },
+    {
+      id: 10,
+      title: "Jardim da Igreja",
+      image: "https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=800&h=600&fit=crop",
+      category: "Igreja"
+    },
+    {
+      id: 11,
+      title: "Catequese",
+      image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=600&fit=crop",
+      category: "Formação"
+    },
+    {
+      id: 12,
+      title: "Celebração de Casamento",
+      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop",
+      category: "Sacramentos"
+    }
+  ];
+
+  const categories = ["Todas", "Igreja", "Liturgia", "Sacramentos", "Música", "Pastoral", "Caridade", "Formação", "Eventos"];
+  const [selectedCategory, setSelectedCategory] = useState("Todas");
+
+  const filteredPhotos = selectedCategory === "Todas" 
+    ? parishPhotos 
+    : parishPhotos.filter(photo => photo.category === selectedCategory);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
@@ -167,11 +267,19 @@ const ParishPage = () => {
                 <div key={priest.id} className="bg-white rounded-2xl shadow-lg p-6 transform hover:scale-105 transition-all duration-300">
                   <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
                     <div className="relative">
-                      <img 
-                        src={priest.image} 
-                        alt={priest.name}
-                        className="w-32 h-40 object-cover rounded-xl shadow-lg"
-                      />
+                      <div 
+                        className="cursor-pointer transform hover:scale-105 transition-transform duration-300"
+                        onClick={() => openImageModal(priest.image, priest.name)}
+                      >
+                        <img 
+                          src={priest.image} 
+                          alt={priest.name}
+                          className="w-32 h-40 object-cover rounded-xl shadow-lg"
+                        />
+                        <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-20 transition-all duration-300 rounded-xl flex items-center justify-center">
+                          <span className="text-white text-2xl opacity-0 hover:opacity-100 transition-opacity duration-300">🔍</span>
+                        </div>
+                      </div>
                       <div className="absolute -top-2 -right-2 w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
                         ✝️
                       </div>
@@ -204,11 +312,19 @@ const ParishPage = () => {
                 <div key={deacon.id} className="bg-white rounded-2xl shadow-lg p-6 transform hover:scale-105 transition-all duration-300">
                   <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
                     <div className="relative">
-                      <img 
-                        src={deacon.image} 
-                        alt={deacon.name}
-                        className="w-32 h-40 object-cover rounded-xl shadow-lg"
-                      />
+                      <div 
+                        className="cursor-pointer transform hover:scale-105 transition-transform duration-300"
+                        onClick={() => openImageModal(deacon.image, deacon.name)}
+                      >
+                        <img 
+                          src={deacon.image} 
+                          alt={deacon.name}
+                          className="w-32 h-40 object-cover rounded-xl shadow-lg"
+                        />
+                        <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-20 transition-all duration-300 rounded-xl flex items-center justify-center">
+                          <span className="text-white text-2xl opacity-0 hover:opacity-100 transition-opacity duration-300">🔍</span>
+                        </div>
+                      </div>
                       <div className="absolute -top-2 -right-2 w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
                         🔷
                       </div>
@@ -261,6 +377,70 @@ const ParishPage = () => {
           </div>
         </div>
 
+        {/* Galeria de Fotos */}
+        <div className="mb-16">
+          <h2 className="text-4xl font-bold text-center text-gray-800 mb-12">
+            Galeria de Fotos
+          </h2>
+          
+          {/* Filtros de Categoria */}
+          <div className="flex flex-wrap justify-center gap-4 mb-8">
+            {categories.map((category) => (
+              <button
+                key={category}
+                onClick={() => setSelectedCategory(category)}
+                className={`px-6 py-2 rounded-full font-medium transition-all duration-300 ${
+                  selectedCategory === category
+                    ? 'bg-blue-600 text-white shadow-lg'
+                    : 'bg-white text-gray-600 hover:bg-gray-100 shadow-md'
+                }`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+
+          {/* Grid de Fotos */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {filteredPhotos.map((photo, index) => (
+              <div
+                key={photo.id}
+                className="group relative bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition-all duration-300 cursor-pointer"
+                onClick={() => openGalleryModal(
+                  filteredPhotos.map(p => p.image), 
+                  index, 
+                  `Galeria - ${photo.category}`
+                )}
+              >
+                <div className="aspect-w-4 aspect-h-3">
+                  <img
+                    src={photo.image}
+                    alt={photo.title}
+                    className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
+                  />
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                    <h3 className="font-semibold text-lg mb-1">{photo.title}</h3>
+                    <p className="text-sm opacity-90">{photo.category}</p>
+                  </div>
+                </div>
+                <div className="absolute top-3 right-3">
+                  <div className="w-8 h-8 bg-white/90 rounded-full flex items-center justify-center text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    🔍
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {filteredPhotos.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-gray-500 text-lg">Nenhuma foto encontrada para esta categoria.</p>
+            </div>
+          )}
+        </div>
+
         {/* Call to Action */}
         <div className="text-center mt-16">
           <div className="bg-gradient-to-r from-blue-600 to-purple-700 rounded-2xl p-8 text-white">
@@ -276,6 +456,17 @@ const ParishPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Image Modal */}
+      {selectedImage && (
+        <ImageModal
+          isOpen={true}
+          onClose={closeImageModal}
+          images={selectedImage.images}
+          initialIndex={selectedImage.index}
+          title={selectedImage.title}
+        />
+      )}
 
       {/* CSS for animations */}
       <style dangerouslySetInnerHTML={{

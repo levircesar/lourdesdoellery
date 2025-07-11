@@ -1,17 +1,34 @@
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import Hero from '../components/Hero';
 import NewsSection from '../components/NewsSection';
 import AnnouncementsSection from '../components/AnnouncementsSection';
 import MassScheduleSection from '../components/MassScheduleSection';
-import BirthdaysSection from '../components/BirthdaysSection';
 
 const HomePage = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    // Verificar se há um scrollTo no state (quando vem de outra página)
+    if (location.state?.scrollTo) {
+      const sectionId = location.state.scrollTo;
+      
+      // Aguardar um pouco para a página carregar completamente
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    }
+  }, [location.state]);
+
   return (
     <div className="min-h-screen">
       <Hero />
       <NewsSection />
       <AnnouncementsSection />
       <MassScheduleSection />
-      <BirthdaysSection />
       
       {/* Footer */}
       <footer className="bg-church-blue text-white py-12">

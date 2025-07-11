@@ -212,22 +212,6 @@ const MassScheduleSection = () => {
           </div>
         )}
 
-        <div className="text-center mt-12">
-          <div className="inline-flex items-center space-x-6 text-sm text-gray-600">
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-church-gold rounded-full"></div>
-              <span>Domingo</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-church-blue rounded-full"></div>
-              <span>Sábado</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-gray-300 rounded-full"></div>
-              <span>Dias da semana</span>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
   );
