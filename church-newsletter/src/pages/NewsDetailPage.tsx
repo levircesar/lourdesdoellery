@@ -120,11 +120,10 @@ const NewsDetailPage = () => {
           {/* Content */}
           <div className="p-8">
             <div className="prose prose-lg max-w-none">
-              {news.content.split('\n').map((paragraph: string, index: number) => (
-                <p key={index} className="mb-4 text-gray-700 leading-relaxed">
-                  {paragraph}
-                </p>
-              ))}
+              <div 
+                className="news-content"
+                dangerouslySetInnerHTML={{ __html: news.content }}
+              />
             </div>
 
             {/* Share buttons */}

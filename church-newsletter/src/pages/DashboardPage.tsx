@@ -9,6 +9,7 @@ import { useDashboardDizimistas } from '../hooks/useDashboardDizimistas';
 import { useDashboardBirthdays } from '../hooks/useDashboardBirthdays';
 import DataTable from '../components/DataTable';
 import Modal from '../components/Modal';
+import RichTextEditor from '../components/RichTextEditor';
 import { News, Announcement, MassSchedule, ParishInfo, Dizimista, Birthday } from '../types';
 
 const DashboardPage = () => {
@@ -701,16 +702,16 @@ const NewsForm: React.FC<{
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Conteúdo *
         </label>
-        <textarea
-          required
+        <RichTextEditor
           value={formData.content}
-          onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-          rows={6}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-church-blue"
+          onChange={(html) => setFormData({ ...formData, content: html })}
+          height="250px"
+          minHeight="200px"
+          maxHeight="500px"
         />
       </div>
 
-      <div className="flex items-center">
+      <div className="flex items-center mt-6">
         <input
           type="checkbox"
           id="is_published"
@@ -723,7 +724,7 @@ const NewsForm: React.FC<{
         </label>
       </div>
 
-      <div className="flex justify-end space-x-3 pt-4">
+      <div className="flex justify-end space-x-3 pt-6">
         <button
           type="button"
           onClick={onCancel}
