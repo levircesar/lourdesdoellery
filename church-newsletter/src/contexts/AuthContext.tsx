@@ -9,6 +9,10 @@ interface AuthContextType {
   logout: () => void;
   isAuthenticated: boolean;
   loading: boolean;
+  hasPermission: (permission: string) => boolean;
+  isAdmin: boolean;
+  isEditor: boolean;
+  isCommon: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -32,6 +36,19 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     return savedUser && savedToken ? JSON.parse(savedUser) : null;
   });
   const [loading, setLoading] = useState(false);
+
+  // Função para verificar permissões
+  const hasPermission = (permission: string): boolean => {
+    if (!user) return false;
+    
+    const permissions = {
+      admin: ['all'],
+      editor: ['news', 'announcements', 'mass-schedule', 'parish-info', 'dizimistas', 'birthdays'],
+      common: ['birthdays']
+    };
+    
+    return permissions[user.role]?.includes('all') || permissions[user.role]?.includes(permission);
+  };
 
   const login = async (email: string, password: string): Promise<boolean> => {
     setLoading(true);
@@ -67,6 +84,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     logout,
     isAuthenticated: !!user,
     loading,
+    hasPermission,
+    isAdmin: user?.role === 'admin',
+    isEditor: user?.role === 'editor',
+    isCommon: user?.role === 'common',
   };
 
   return (

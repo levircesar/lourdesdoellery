@@ -25,6 +25,10 @@ const DataTable: React.FC<DataTableProps> = ({
   loading = false,
   emptyMessage = "Nenhum item encontrado"
 }) => {
+  console.log('DataTable - Dados recebidos:', data);
+  console.log('DataTable - Loading:', loading);
+  console.log('DataTable - Colunas:', columns);
+
   if (loading) {
     return (
       <div className="card p-6">
@@ -37,6 +41,7 @@ const DataTable: React.FC<DataTableProps> = ({
   }
 
   if (data.length === 0) {
+    console.log('DataTable - Nenhum dado encontrado');
     return (
       <div className="card p-6">
         <div className="text-center">

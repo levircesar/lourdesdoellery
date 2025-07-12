@@ -1,4 +1,5 @@
 import { useMassSchedule } from '../hooks/useMassSchedule';
+import { formatTime } from '../utils/dateTime';
 
 const MassScheduleSection = () => {
   const { massSchedules, loading, error } = useMassSchedule();
@@ -145,7 +146,7 @@ const MassScheduleSection = () => {
                           <span className="text-sm text-gray-600">{schedule.description}</span>
                         </div>
                         <div className="text-lg font-bold text-church-blue">
-                          {schedule.time}
+                          {formatTime(schedule.time)}
                         </div>
                       </div>
                     ))}
@@ -173,7 +174,7 @@ const MassScheduleSection = () => {
                           <span className="text-sm text-gray-600">{schedule.description}</span>
                         </div>
                         <div className="text-lg font-bold text-church-blue">
-                          {schedule.time}
+                          {formatTime(schedule.time)}
                         </div>
                       </div>
                     ))}
@@ -201,7 +202,7 @@ const MassScheduleSection = () => {
                           <span className="text-sm text-gray-600">{schedule.description}</span>
                         </div>
                         <div className="text-lg font-bold text-church-blue">
-                          {schedule.time}
+                          {formatTime(schedule.time)}
                         </div>
                       </div>
                     ))}

@@ -1,7 +1,7 @@
 const express = require('express');
 const { body } = require('express-validator');
 const { dizimistaController } = require('../controllers');
-const { auth, requireRole } = require('../middleware/auth');
+const { authenticateToken, requirePermission } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -43,11 +43,11 @@ router.get('/active', (req, res) => {
 });
 
 // Rotas protegidas (admin/editor)
-router.get('/', auth, requireRole(['admin', 'editor']), dizimistaController.getAll);
-router.get('/admin', auth, requireRole(['admin', 'editor']), dizimistaController.getAll);
-router.get('/:id', auth, requireRole(['admin', 'editor']), dizimistaController.getById);
-router.post('/', auth, requireRole(['admin', 'editor']), dizimistaValidation, dizimistaController.create);
-router.put('/:id', auth, requireRole(['admin', 'editor']), dizimistaValidation, dizimistaController.update);
-router.delete('/:id', auth, requireRole(['admin']), dizimistaController.remove);
+router.get('/', authenticateToken, requirePermission('dizimistas'), dizimistaController.getAll);
+router.get('/admin', authenticateToken, requirePermission('dizimistas'), dizimistaController.getAll);
+router.get('/:id', authenticateToken, requirePermission('dizimistas'), dizimistaController.getById);
+router.post('/', authenticateToken, requirePermission('dizimistas'), dizimistaValidation, dizimistaController.create);
+router.put('/:id', authenticateToken, requirePermission('dizimistas'), dizimistaValidation, dizimistaController.update);
+router.delete('/:id', authenticateToken, requirePermission('dizimistas'), dizimistaController.remove);
 
 module.exports = router; 

@@ -27,7 +27,7 @@ const NewsDetailPage = () => {
   if (loading || newsLoading) {
     return (
       <div className="min-h-screen bg-gray-50 pt-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-church-blue mx-auto"></div>
             <p className="mt-4 text-gray-600">Carregando notícia...</p>
@@ -40,7 +40,7 @@ const NewsDetailPage = () => {
   if (error || !news) {
     return (
       <div className="min-h-screen bg-gray-50 pt-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="text-center">
             <h1 className="text-4xl font-bold text-gray-900 mb-4">Notícia não encontrada</h1>
             <p className="text-gray-600 mb-8">A notícia que você está procurando não existe ou foi removida.</p>
@@ -57,7 +57,7 @@ const NewsDetailPage = () => {
     <div className="min-h-screen bg-gray-50 pt-16">
       {/* Breadcrumb */}
       <div className="bg-white border-b">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <nav className="flex" aria-label="Breadcrumb">
             <ol className="flex items-center space-x-4">
               <li>
@@ -89,7 +89,7 @@ const NewsDetailPage = () => {
       </div>
 
       {/* Article */}
-      <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <article className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           {/* Header */}
           <div className="p-8 border-b border-gray-200">

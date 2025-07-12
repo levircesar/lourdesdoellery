@@ -4,6 +4,7 @@ import Hero from '../components/Hero';
 import NewsSection from '../components/NewsSection';
 import AnnouncementsSection from '../components/AnnouncementsSection';
 import MassScheduleSection from '../components/MassScheduleSection';
+import BirthdaysSection from '../components/BirthdaysSection';
 
 const HomePage = () => {
   const location = useLocation();
@@ -27,8 +28,9 @@ const HomePage = () => {
     <div className="min-h-screen">
       <Hero />
       <NewsSection />
-      <AnnouncementsSection />
+      <AnnouncementsSection showAllActive />
       <MassScheduleSection />
+      <BirthdaysSection />
       
       {/* Footer */}
       <footer className="bg-church-blue text-white py-12">

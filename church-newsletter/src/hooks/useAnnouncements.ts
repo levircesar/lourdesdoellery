@@ -25,62 +25,16 @@ export const useAnnouncements = () => {
     })
       .then((res: AxiosResponse<ApiResponse<Announcement[]>>) => {
         const data = Array.isArray(res.data.data) ? res.data.data : [];
-        // Filtrar apenas avisos ativos e dentro do período válido
-        const now = new Date();
-        // Resetar horas para comparar apenas a data
-        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        
-        console.log('Data atual:', today.toISOString());
-        
-        const activeAnnouncements = data.filter(announcement => {
-          if (!announcement.is_active) return false;
-          
-          const startDate = new Date(announcement.week_start);
-          const endDate = new Date(announcement.week_end);
-          
-          // Resetar horas para comparar apenas a data
-          const startDateOnly = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
-          const endDateOnly = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
-          
-          console.log(`Aviso "${announcement.title}":`, {
-            startDate: startDateOnly.toISOString(),
-            endDate: endDateOnly.toISOString(),
-            isInRange: today >= startDateOnly && today <= endDateOnly
-          });
-          
-          return today >= startDateOnly && today <= endDateOnly;
-        });
+        // Filtrar apenas avisos ativos
+        const activeAnnouncements = data.filter(announcement => announcement.is_active);
         setAnnouncements(activeAnnouncements);
         setLoading(false);
       })
       .catch((err: AxiosError) => {
         console.warn('API unavailable, using mock data:', err.message);
         const mockData = Array.isArray(mockAnnouncements) ? mockAnnouncements : [];
-        // Filtrar apenas avisos ativos e dentro do período válido dos dados mock
-        const now = new Date();
-        // Resetar horas para comparar apenas a data
-        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        
-        console.log('Data atual (mock):', today.toISOString());
-        
-        const activeAnnouncements = mockData.filter(announcement => {
-          if (!announcement.is_active) return false;
-          
-          const startDate = new Date(announcement.week_start);
-          const endDate = new Date(announcement.week_end);
-          
-          // Resetar horas para comparar apenas a data
-          const startDateOnly = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
-          const endDateOnly = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
-          
-          console.log(`Aviso mock "${announcement.title}":`, {
-            startDate: startDateOnly.toISOString(),
-            endDate: endDateOnly.toISOString(),
-            isInRange: today >= startDateOnly && today <= endDateOnly
-          });
-          
-          return today >= startDateOnly && today <= endDateOnly;
-        });
+        // Filtrar apenas avisos ativos dos dados mock
+        const activeAnnouncements = mockData.filter(announcement => announcement.is_active);
         setAnnouncements(activeAnnouncements);
         setLoading(false);
         setError('API unavailable, using mock data');

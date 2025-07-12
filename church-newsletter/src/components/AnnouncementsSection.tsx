@@ -1,11 +1,16 @@
 import { useAnnouncements } from '../hooks/useAnnouncements';
 import { Announcement } from '../types';
 
-const AnnouncementsSection = () => {
+interface AnnouncementsSectionProps {
+  showAllActive?: boolean;
+}
+
+const AnnouncementsSection = ({ showAllActive = false }: AnnouncementsSectionProps) => {
   const { announcements, loading, error } = useAnnouncements();
-  
-  // Mostrar apenas os 4 anúncios mais recentes
-  const recentAnnouncements = announcements.slice(0, 4);
+  // Filtrar apenas avisos ativos
+  const activeAnnouncements = announcements.filter((a: Announcement) => a.is_active);
+  // Se showAllActive, mostrar todos ativos, senão só os 4 mais recentes
+  const displayAnnouncements = showAllActive ? activeAnnouncements : activeAnnouncements.slice(0, 4);
 
   if (loading) {
     return (
@@ -48,37 +53,34 @@ const AnnouncementsSection = () => {
           </p>
         </div>
 
-        {recentAnnouncements.length === 0 ? (
+        {displayAnnouncements.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-gray-500 text-lg">Nenhum anúncio ativo no momento.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {recentAnnouncements.map((announcement: Announcement) => (
+            {displayAnnouncements.map((announcement: Announcement) => (
               <div key={announcement.id} className="card border-l-4 border-church-blue">
                 <div className="p-6">
                   <div className="flex items-center justify-between mb-4">
-                    {!announcement.is_published && (
-                      <span className="px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800 border">
-                        Rascunho
+                    <div className="flex flex-col">
+                      <span className="text-xs text-gray-400">
+                        Criado em {new Date(announcement.createdAt).toLocaleDateString('pt-BR')}
                       </span>
-                    )}
-                    <span className="text-sm text-gray-500">
-                      {new Date(announcement.createdAt).toLocaleDateString('pt-BR')}
-                    </span>
+                      <span className="text-sm text-gray-500">
+                        Período: {new Date(announcement.week_start).toLocaleDateString('pt-BR')} a {new Date(announcement.week_end).toLocaleDateString('pt-BR')}
+                      </span>
+                    </div>
                   </div>
-                  
                   <h4 className="text-xl font-bold text-gray-900 mb-3">
                     {announcement.title}
                   </h4>
-                  
                   <p className="text-gray-600 leading-relaxed mb-4">
                     {announcement.content.length > 200 
                       ? `${announcement.content.substring(0, 200)}...` 
                       : announcement.content
                     }
                   </p>
-                  
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4 text-sm text-gray-500">
                       {announcement.author && (
@@ -90,12 +92,6 @@ const AnnouncementsSection = () => {
                         </span>
                       )}
                     </div>
-                    
-                    {!announcement.is_published && (
-                      <span className="px-2 py-1 rounded text-xs font-semibold bg-yellow-100 text-yellow-800">
-                        Rascunho
-                      </span>
-                    )}
                   </div>
                 </div>
               </div>
@@ -103,7 +99,7 @@ const AnnouncementsSection = () => {
           </div>
         )}
 
-        {announcements.length > 4 && (
+        {activeAnnouncements.length > 4 && !showAllActive && (
           <div className="text-center mt-12">
             <button className="btn-primary">
               Ver todos os anúncios

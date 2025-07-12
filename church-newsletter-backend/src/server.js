@@ -5,7 +5,7 @@ const path = require('path');
 require('dotenv').config();
 
 const { sequelize, testConnection } = require('./config/database');
-const { User, News, Announcement, MassSchedule, Birthday, Dizimista, ParishInfo } = require('./models');
+const { User, News, Announcement, MassSchedule, Birthday, Dizimista, ParishInfo, MassIntention } = require('./models');
 
 // Importar rotas
 const authRoutes = require('./routes/auth');
@@ -15,6 +15,7 @@ const massScheduleRoutes = require('./routes/mass-schedules');
 const birthdayRoutes = require('./routes/birthdays');
 const dizimistaRoutes = require('./routes/dizimistas');
 const parishInfoRoutes = require('./routes/parish-info');
+const massIntentionRoutes = require('./routes/mass-intentions');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -49,6 +50,7 @@ app.use('/api/mass-schedule', massScheduleRoutes);
 app.use('/api/birthdays', birthdayRoutes);
 app.use('/api/dizimistas', dizimistaRoutes);
 app.use('/api/parish-info', parishInfoRoutes);
+app.use('/api/mass-intentions', massIntentionRoutes);
 
 // Rota de health check
 app.get('/api/health', (req, res) => {

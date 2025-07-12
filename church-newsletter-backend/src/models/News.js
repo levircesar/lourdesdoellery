@@ -32,10 +32,6 @@ const News = sequelize.define('News', {
     type: DataTypes.TEXT,
     allowNull: true
   },
-  image_url: {
-    type: DataTypes.STRING,
-    allowNull: true
-  },
   is_published: {
     type: DataTypes.BOOLEAN,
     defaultValue: false
@@ -44,7 +40,11 @@ const News = sequelize.define('News', {
     type: DataTypes.DATE,
     allowNull: true
   },
-  order: {
+  expires_at: {
+    type: DataTypes.DATE,
+    allowNull: true
+  },
+  order_index: {
     type: DataTypes.INTEGER,
     defaultValue: 0
   },
@@ -61,20 +61,26 @@ const News = sequelize.define('News', {
   hooks: {
     beforeCreate: (news) => {
       if (news.title && !news.slug) {
-        news.slug = slugify(news.title, { 
+        const now = new Date();
+        const dateStr = now.toISOString().split('T')[0]; // YYYY-MM-DD
+        const titleSlug = slugify(news.title, { 
           lower: true, 
           strict: true,
           locale: 'pt'
         });
+        news.slug = `${dateStr}-${titleSlug}`;
       }
     },
     beforeUpdate: (news) => {
       if (news.changed('title') && !news.changed('slug')) {
-        news.slug = slugify(news.title, { 
+        const now = new Date();
+        const dateStr = now.toISOString().split('T')[0]; // YYYY-MM-DD
+        const titleSlug = slugify(news.title, { 
           lower: true, 
           strict: true,
           locale: 'pt'
         });
+        news.slug = `${dateStr}-${titleSlug}`;
       }
     }
   }

@@ -162,6 +162,10 @@ class ApiService {
     });
   }
 
+  async getAnnouncementsPrintReport() {
+    return this.request('/announcements/print/report');
+  }
+
   // Mass Schedule endpoints
   async getMassSchedule(params?: { page?: number; limit?: number; search?: string; day_of_week?: number; is_active?: boolean }) {
     const queryParams = params ? `?${new URLSearchParams(params as any).toString()}` : '';
@@ -198,6 +202,10 @@ class ApiService {
     return this.request(`/mass-schedule/${id}`, {
       method: 'DELETE',
     });
+  }
+
+  async getMassSchedulePrintReport() {
+    return this.request('/mass-schedule/print/report');
   }
 
   // Birthdays endpoints
@@ -324,6 +332,49 @@ class ApiService {
   // Health check
   async healthCheck() {
     return this.request('/health');
+  }
+
+  // User management endpoints
+  async getUsers() {
+    return this.request('/auth/users');
+  }
+
+  async getUserById(id: string) {
+    return this.request(`/auth/users/${id}`);
+  }
+
+  async createUser(userData: any) {
+    return this.request('/auth/users', {
+      method: 'POST',
+      body: JSON.stringify(userData),
+    });
+  }
+
+  async updateUser(id: string, userData: any) {
+    return this.request(`/auth/users/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(userData),
+    });
+  }
+
+  async deleteUser(id: string) {
+    return this.request(`/auth/users/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async changeUserPassword(id: string, newPassword: string) {
+    return this.request(`/auth/users/${id}/change-password`, {
+      method: 'POST',
+      body: JSON.stringify({ newPassword }),
+    });
+  }
+
+  async changeOwnPassword(currentPassword: string, newPassword: string) {
+    return this.request('/auth/change-own-password', {
+      method: 'POST',
+      body: JSON.stringify({ currentPassword, newPassword }),
+    });
   }
 }
 

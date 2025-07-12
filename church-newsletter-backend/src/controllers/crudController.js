@@ -275,13 +275,54 @@ const createCrudController = (Model, options = {}) => {
     }
   };
 
+  // Método para gerar relatório de impressão
+  const generatePrintReport = async (req, res) => {
+    try {
+      const items = await Model.findAll({
+        where: { is_active: true },
+        include,
+        order: orderBy
+      });
+
+      res.json({
+        success: true,
+        data: {
+          title: getPrintTitle(),
+          parish: 'Paróquia Nossa Senhora de Lourdes',
+          generatedAt: new Date().toLocaleString('pt-BR'),
+          total: items.length,
+          items: items
+        }
+      });
+    } catch (error) {
+      console.error(`Erro ao gerar relatório de ${Model.name}:`, error);
+      res.status(500).json({
+        success: false,
+        message: 'Erro interno do servidor'
+      });
+    }
+  };
+
+  // Função auxiliar para obter título do relatório
+  const getPrintTitle = () => {
+    switch (Model.name) {
+      case 'Announcement':
+        return 'Relatório de Avisos';
+      case 'MassSchedule':
+        return 'Horários de Missa';
+      default:
+        return `Relatório de ${Model.name}`;
+    }
+  };
+
   return {
     getAll,
     getById,
     create,
     update,
     remove,
-    updateOrder
+    updateOrder,
+    generatePrintReport
   };
 };
 

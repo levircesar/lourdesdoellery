@@ -34,8 +34,8 @@ const User = sequelize.define('User', {
     }
   },
   role: {
-    type: DataTypes.ENUM('admin', 'editor'),
-    defaultValue: 'editor',
+    type: DataTypes.ENUM('admin', 'editor', 'common'),
+    defaultValue: 'common',
     allowNull: false
   },
   is_active: {
@@ -71,6 +71,29 @@ User.prototype.toSafeObject = function() {
   const user = this.toJSON();
   delete user.password;
   return user;
+};
+
+// Método para verificar se o usuário tem permissão
+User.prototype.hasPermission = function(permission) {
+  const permissions = {
+    admin: ['all'],
+    editor: ['news', 'announcements', 'mass-schedule', 'parish-info', 'dizimistas', 'birthdays'],
+    common: ['birthdays']
+  };
+  
+  return permissions[this.role]?.includes('all') || permissions[this.role]?.includes(permission);
+};
+
+// Método para verificar se pode alterar o papel de outro usuário
+User.prototype.canChangeRole = function(targetUser, newRole) {
+  // Administradores podem alterar qualquer papel, exceto de admin para menor
+  if (this.role === 'admin') {
+    if (targetUser.role === 'admin' && newRole !== 'admin') {
+      return false; // Não pode rebaixar outro admin
+    }
+    return true;
+  }
+  return false; // Apenas admins podem alterar papéis
 };
 
 module.exports = User; 

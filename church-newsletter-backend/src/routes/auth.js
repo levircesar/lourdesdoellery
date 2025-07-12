@@ -1,36 +1,32 @@
 const express = require('express');
-const { body } = require('express-validator');
-const { authController } = require('../controllers');
-const { auth } = require('../middleware/auth');
-
 const router = express.Router();
-
-// Validação para login
-const loginValidation = [
-  body('email')
-    .isEmail()
-    .withMessage('Email inválido')
-    .normalizeEmail(),
-  body('password')
-    .isLength({ min: 1 })
-    .withMessage('Senha é obrigatória')
-];
-
-// Validação para alteração de senha
-const changePasswordValidation = [
-  body('currentPassword')
-    .isLength({ min: 1 })
-    .withMessage('Senha atual é obrigatória'),
-  body('newPassword')
-    .isLength({ min: 6 })
-    .withMessage('Nova senha deve ter pelo menos 6 caracteres')
-];
+const { 
+  login, 
+  changePassword, 
+  getAllUsers, 
+  getUserById,
+  createUser, 
+  updateUser, 
+  deleteUser,
+  changeOwnPassword,
+  changeUserPassword
+} = require('../controllers/authController');
+const { authenticateToken, requireRole } = require('../middleware/auth');
 
 // Rotas públicas
-router.post('/login', loginValidation, authController.login);
+router.post('/login', login);
+// router.post('/register', register); // Removido pois não existe
 
 // Rotas protegidas
-router.get('/profile', auth, authController.getProfile);
-router.put('/change-password', auth, changePasswordValidation, authController.changePassword);
+router.post('/change-password', authenticateToken, changePassword);
+router.post('/change-own-password', authenticateToken, changeOwnPassword);
+
+// Rotas de gerenciamento de usuários (apenas admin)
+router.get('/users', authenticateToken, requireRole('admin'), getAllUsers);
+router.get('/users/:id', authenticateToken, requireRole('admin'), getUserById);
+router.post('/users', authenticateToken, requireRole('admin'), createUser);
+router.put('/users/:id', authenticateToken, requireRole('admin'), updateUser);
+router.delete('/users/:id', authenticateToken, requireRole('admin'), deleteUser);
+router.post('/users/:id/change-password', authenticateToken, requireRole('admin'), changeUserPassword);
 
 module.exports = router; 

@@ -86,6 +86,19 @@ export const useDashboardMassSchedule = () => {
     }
   }, [fetchAllMassSchedules]);
 
+  const generatePrintReport = useCallback(async () => {
+    try {
+      const response = await apiService.getMassSchedulePrintReport();
+      if (response.success) {
+        return { success: true, data: response.data };
+      }
+      return { success: false, error: response.message };
+    } catch (err) {
+      console.error('Erro ao gerar relatório de horários de missa:', err);
+      return { success: false, error: 'Erro ao gerar relatório de horários de missa' };
+    }
+  }, []);
+
   useEffect(() => {
     fetchAllMassSchedules();
   }, [fetchAllMassSchedules]);
@@ -97,6 +110,7 @@ export const useDashboardMassSchedule = () => {
     fetchMassSchedules: fetchAllMassSchedules,
     createMassSchedule,
     updateMassSchedule,
-    deleteMassSchedule
+    deleteMassSchedule,
+    generatePrintReport
   };
 }; 

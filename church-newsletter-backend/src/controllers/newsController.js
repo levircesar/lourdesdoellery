@@ -39,7 +39,7 @@ const getAll = async (req, res) => {
       include: [
         { model: User, as: 'author', attributes: ['id', 'name'] }
       ],
-      order: [['order', 'ASC'], ['created_at', 'DESC']],
+      order: [['order_index', 'ASC'], ['created_at', 'DESC']],
       limit: parseInt(limit),
       offset: parseInt(offset)
     });

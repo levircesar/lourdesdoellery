@@ -1,7 +1,7 @@
 const express = require('express');
 const { body } = require('express-validator');
 const { newsController } = require('../controllers');
-const { auth, requireRole } = require('../middleware/auth');
+const { authenticateToken, requirePermission } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -29,12 +29,12 @@ router.get('/published', newsController.getAll);
 router.get('/slug/:slug', newsController.getBySlug);
 
 // Rotas protegidas (admin/editor)
-router.get('/admin', auth, requireRole(['admin', 'editor']), newsController.getAll);
-router.get('/:id', auth, requireRole(['admin', 'editor']), newsController.getById);
-router.post('/', auth, requireRole(['admin', 'editor']), newsValidation, newsController.create);
-router.put('/:id', auth, requireRole(['admin', 'editor']), newsValidation, newsController.update);
-router.delete('/:id', auth, requireRole(['admin']), newsController.remove);
-router.put('/:id/publish', auth, requireRole(['admin', 'editor']), newsController.publish);
-router.put('/order', auth, requireRole(['admin', 'editor']), newsController.updateOrder);
+router.get('/admin', authenticateToken, requirePermission('news'), newsController.getAll);
+router.get('/:id', authenticateToken, requirePermission('news'), newsController.getById);
+router.post('/', authenticateToken, requirePermission('news'), newsValidation, newsController.create);
+router.put('/:id', authenticateToken, requirePermission('news'), newsValidation, newsController.update);
+router.delete('/:id', authenticateToken, requirePermission('news'), newsController.remove);
+router.put('/:id/publish', authenticateToken, requirePermission('news'), newsController.publish);
+router.put('/order', authenticateToken, requirePermission('news'), newsController.updateOrder);
 
 module.exports = router; 

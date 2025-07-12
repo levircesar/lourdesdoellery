@@ -1,7 +1,7 @@
 const express = require('express');
 const { body } = require('express-validator');
 const { birthdayController } = require('../controllers');
-const { auth, requireRole } = require('../middleware/auth');
+const { authenticateToken, requirePermission } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -47,10 +47,10 @@ router.get('/next-month', (req, res) => {
 });
 
 // Rotas protegidas (admin/editor)
-router.get('/admin', auth, requireRole(['admin', 'editor']), birthdayController.getAll);
-router.get('/:id', auth, requireRole(['admin', 'editor']), birthdayController.getById);
-router.post('/', auth, requireRole(['admin', 'editor']), birthdayValidation, birthdayController.create);
-router.put('/:id', auth, requireRole(['admin', 'editor']), birthdayValidation, birthdayController.update);
-router.delete('/:id', auth, requireRole(['admin']), birthdayController.remove);
+router.get('/admin', authenticateToken, requirePermission('birthdays'), birthdayController.getAll);
+router.get('/:id', authenticateToken, requirePermission('birthdays'), birthdayController.getById);
+router.post('/', authenticateToken, requirePermission('birthdays'), birthdayValidation, birthdayController.create);
+router.put('/:id', authenticateToken, requirePermission('birthdays'), birthdayValidation, birthdayController.update);
+router.delete('/:id', authenticateToken, requirePermission('birthdays'), birthdayController.remove);
 
 module.exports = router; 

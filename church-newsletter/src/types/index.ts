@@ -77,7 +77,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  role: 'admin' | 'editor' | 'user';
+  role: 'admin' | 'editor' | 'common';
   is_active: boolean;
   last_login?: string;
   createdAt: string;
@@ -139,4 +139,37 @@ export interface ParishInfoFormData {
   content: string;
   image_url?: string;
   is_active?: boolean;
+}
+
+// User management form data interfaces
+export interface UserFormData {
+  name: string;
+  email: string;
+  password?: string;
+  role: 'admin' | 'editor' | 'common';
+  is_active?: boolean;
+}
+
+export interface ChangePasswordFormData {
+  currentPassword: string;
+  newPassword: string;
+}
+
+export interface MassIntention {
+  id: string;
+  intention_type: 'thanksgiving' | 'deceased';
+  notes: string;
+  is_recurring: boolean;
+  created_by: string;
+  creator?: User;
+  created_at?: string;
+  updated_at?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface MassIntentionFormData {
+  intention_type: 'thanksgiving' | 'deceased';
+  notes: string;
+  is_recurring: boolean;
 } 

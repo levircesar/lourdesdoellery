@@ -16,8 +16,11 @@ const MassSchedule = sequelize.define('MassSchedule', {
     }
   },
   time: {
-    type: DataTypes.TIME,
-    allowNull: false
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      is: /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/ // Formato HH:MM
+    }
   },
   description: {
     type: DataTypes.STRING,
@@ -27,7 +30,7 @@ const MassSchedule = sequelize.define('MassSchedule', {
     type: DataTypes.BOOLEAN,
     defaultValue: true
   },
-  order: {
+  order_index: {
     type: DataTypes.INTEGER,
     defaultValue: 0
   }

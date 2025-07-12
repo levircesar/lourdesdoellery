@@ -1,7 +1,7 @@
 const express = require('express');
 const { body } = require('express-validator');
 const { massScheduleController } = require('../controllers');
-const { auth, requireRole } = require('../middleware/auth');
+const { authenticateToken, requirePermission } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -40,10 +40,11 @@ router.get('/today', (req, res) => {
 });
 
 // Rotas protegidas (admin/editor)
-router.get('/admin', auth, requireRole(['admin', 'editor']), massScheduleController.getAll);
-router.get('/:id', auth, requireRole(['admin', 'editor']), massScheduleController.getById);
-router.post('/', auth, requireRole(['admin', 'editor']), massScheduleValidation, massScheduleController.create);
-router.put('/:id', auth, requireRole(['admin', 'editor']), massScheduleValidation, massScheduleController.update);
-router.delete('/:id', auth, requireRole(['admin']), massScheduleController.remove);
+router.get('/admin', authenticateToken, requirePermission('mass-schedule'), massScheduleController.getAll);
+router.get('/:id', authenticateToken, requirePermission('mass-schedule'), massScheduleController.getById);
+router.post('/', authenticateToken, requirePermission('mass-schedule'), massScheduleValidation, massScheduleController.create);
+router.put('/:id', authenticateToken, requirePermission('mass-schedule'), massScheduleValidation, massScheduleController.update);
+router.delete('/:id', authenticateToken, requirePermission('mass-schedule'), massScheduleController.remove);
+router.get('/print/report', authenticateToken, requirePermission('mass-schedule'), massScheduleController.generatePrintReport);
 
 module.exports = router; 

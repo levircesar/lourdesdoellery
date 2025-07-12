@@ -86,6 +86,19 @@ export const useDashboardAnnouncements = () => {
     }
   }, [fetchAllAnnouncements]);
 
+  const generatePrintReport = useCallback(async () => {
+    try {
+      const response = await apiService.getAnnouncementsPrintReport();
+      if (response.success) {
+        return { success: true, data: response.data };
+      }
+      return { success: false, error: response.message };
+    } catch (err) {
+      console.error('Erro ao gerar relatório de avisos:', err);
+      return { success: false, error: 'Erro ao gerar relatório de avisos' };
+    }
+  }, []);
+
   useEffect(() => {
     fetchAllAnnouncements();
   }, [fetchAllAnnouncements]);
@@ -97,6 +110,7 @@ export const useDashboardAnnouncements = () => {
     fetchAnnouncements: fetchAllAnnouncements,
     createAnnouncement,
     updateAnnouncement,
-    deleteAnnouncement
+    deleteAnnouncement,
+    generatePrintReport
   };
 }; 

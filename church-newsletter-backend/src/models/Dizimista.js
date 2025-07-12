@@ -34,7 +34,7 @@ const Dizimista = sequelize.define('Dizimista', {
     type: DataTypes.BOOLEAN,
     defaultValue: true
   },
-  order: {
+  order_index: {
     type: DataTypes.INTEGER,
     defaultValue: 0
   }

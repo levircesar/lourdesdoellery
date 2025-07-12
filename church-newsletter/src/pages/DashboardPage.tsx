@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useDashboardNews } from '../hooks/useDashboardNews';
@@ -7,69 +7,146 @@ import { useDashboardMassSchedule } from '../hooks/useDashboardMassSchedule';
 import { useDashboardParishInfo } from '../hooks/useDashboardParishInfo';
 import { useDashboardDizimistas } from '../hooks/useDashboardDizimistas';
 import { useDashboardBirthdays } from '../hooks/useDashboardBirthdays';
+import { useUsers } from '../hooks/useUsers';
+import { useMassIntentions } from '../hooks/useMassIntentions';
 import DataTable from '../components/DataTable';
 import Modal from '../components/Modal';
 import RichTextEditor from '../components/RichTextEditor';
-import { News, Announcement, MassSchedule, ParishInfo, Dizimista, Birthday } from '../types';
+import { News, Announcement, MassSchedule, ParishInfo, Dizimista, Birthday, User, MassIntention, MassIntentionFormData } from '../types';
+import { formatDate } from '../utils/dateTime';
+
+// Interfaces para os tipos de dados dos relatórios
+interface PrintReportData {
+  title: string;
+  parish: string;
+  generatedAt: string;
+  total: number;
+}
+
+interface MassIntentionsPrintReportData extends PrintReportData {
+  groupedByType: Record<string, Array<{
+    id: string;
+    notes: string;
+    is_recurring: boolean;
+  }>>;
+}
+
+interface AnnouncementsPrintReportData extends PrintReportData {
+  items: Array<{
+    title: string;
+    content: string;
+    week_start: string;
+    week_end: string;
+  }>;
+}
+
+interface MassSchedulePrintReportData extends PrintReportData {
+  items: Array<{
+    day_of_week: number;
+    time: string;
+    description?: string;
+  }>;
+}
+import { formatTime } from '../utils/dateTime';
 
 const DashboardPage = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
-  const [modalType, setModalType] = useState<'news' | 'announcement' | 'mass-schedule' | 'parish-info' | 'dizimista' | 'birthday' | null>(null);
+  const [modalType, setModalType] = useState<'news' | 'announcement' | 'mass-schedule' | 'parish-info' | 'dizimista' | 'birthday' | 'user' | 'mass-intention' | null>(null);
   
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  
+  console.log('Dashboard - User object:', user);
+  console.log('Dashboard - User role:', user?.role);
   
   // Hooks para dados
   const { 
     news, 
     loading: newsLoading, 
     createNews, 
-    updateNews, 
-    deleteNews 
+    updateNews,
+    deleteNews: deleteNewsFromHook 
   } = useDashboardNews();
   
   const { 
     announcements, 
     loading: announcementsLoading, 
     createAnnouncement, 
-    updateAnnouncement, 
-    deleteAnnouncement 
+    updateAnnouncement,
+    deleteAnnouncement: deleteAnnouncementFromHook,
+    generatePrintReport: generateAnnouncementsPrintReport
   } = useDashboardAnnouncements();
 
-  const {
-    massSchedules,
-    loading: massSchedulesLoading,
-    createMassSchedule,
+    const { 
+    massSchedules, 
+    loading: massSchedulesLoading, 
+    createMassSchedule, 
     updateMassSchedule,
-    deleteMassSchedule
+    deleteMassSchedule: deleteMassScheduleFromHook,
+    generatePrintReport: generateMassSchedulePrintReport
   } = useDashboardMassSchedule();
 
-  const {
-    parishInfo,
-    loading: parishInfoLoading,
-    createParishInfo,
+    const { 
+    parishInfo, 
+    loading: parishInfoLoading, 
+    createParishInfo, 
     updateParishInfo,
-    deleteParishInfo
+    deleteParishInfo: deleteParishInfoFromHook 
   } = useDashboardParishInfo();
 
-  const {
-    dizimistas,
-    loading: dizimistasLoading,
-    createDizimista,
+    const { 
+    dizimistas, 
+    loading: dizimistasLoading, 
+    createDizimista, 
     updateDizimista,
-    deleteDizimista
+    deleteDizimista: deleteDizimistaFromHook 
   } = useDashboardDizimistas();
 
-  const {
-    birthdays,
-    loading: birthdaysLoading,
-    createBirthday,
+    const { 
+    birthdays, 
+    loading: birthdaysLoading, 
+    createBirthday, 
     updateBirthday,
-    deleteBirthday
+    deleteBirthday: deleteBirthdayFromHook 
   } = useDashboardBirthdays();
+
+  const {
+    users,
+    loading: usersLoading,
+    createUser,
+    updateUser,
+    deleteUser: deleteUserFromHook
+  } = useUsers();
+
+  // Estado para filtros de intenções de missa
+  const [massIntentionFilters, setMassIntentionFilters] = useState({
+    search: '',
+    filter_type: undefined as 'thanksgiving' | 'deceased' | undefined,
+    filter_recurring: undefined as boolean | undefined
+  });
+
+  const { 
+    massIntentions, 
+    loading: massIntentionsLoading, 
+    createMassIntention, 
+    updateMassIntention, 
+    deleteMassIntention: deleteMassIntentionFromHook,
+    deleteAllNonRecurring,
+    generatePrintReport
+  } = useMassIntentions(massIntentionFilters);
+
+  console.log('Dashboard - Usuários carregados:', users);
+  console.log('Dashboard - Loading usuários:', usersLoading);
+
+  // Garantir que usuários comuns sempre fiquem na visão geral
+  useEffect(() => {
+    if (user?.role === 'common' && activeTab !== 'overview') {
+      setActiveTab('overview');
+    }
+  }, [user?.role, activeTab]);
 
   const handleLogout = () => {
     logout();
@@ -78,30 +155,46 @@ const DashboardPage = () => {
 
   const menuItems = [
     { id: 'overview', name: 'Visão Geral', icon: '📊' },
-    { id: 'news', name: 'Notícias', icon: '📰' },
-    { id: 'announcements', name: 'Avisos', icon: '📢' },
-    { id: 'mass-schedule', name: 'Horários de Missa', icon: '⏰' },
-    { id: 'birthdays', name: 'Aniversariantes', icon: '🎂' },
-    { id: 'parish-info', name: 'Info da Paróquia', icon: '🏛️' },
-    { id: 'dizimistas', name: 'Dizimistas', icon: '💰' },
+    // Apenas admin e editor podem ver as outras seções
+    ...(user?.role === 'admin' || user?.role === 'editor' ? [
+      { id: 'news', name: 'Notícias', icon: '📰' },
+      { id: 'announcements', name: 'Avisos', icon: '📢' },
+      { id: 'mass-schedule', name: 'Horários de Missa', icon: '⏰' },
+      { id: 'mass-intentions', name: 'Intenções de Missa', icon: '🙏' },
+      { id: 'birthdays', name: 'Aniversariantes', icon: '🎂' },
+      { id: 'parish-info', name: 'Info da Paróquia', icon: '🏛️' },
+      { id: 'dizimistas', name: 'Dizimistas', icon: '💰' },
+    ] : []),
+    // Apenas admin pode ver usuários
+    ...(user?.role === 'admin' ? [{ id: 'users', name: 'Usuários', icon: '👥' }] : []),
   ];
 
+  console.log('Menu items:', menuItems);
+  console.log('User role:', user?.role);
+
   const stats = [
+    // Estatísticas básicas para todos os usuários
     { name: 'Notícias', value: news.length.toString(), icon: '📰', color: 'bg-blue-500' },
     { name: 'Avisos Ativos', value: announcements.length.toString(), icon: '📢', color: 'bg-green-500' },
     { name: 'Horários de Missa', value: massSchedules.length.toString(), icon: '⏰', color: 'bg-purple-500' },
-    { name: 'Aniversariantes', value: birthdays.length.toString(), icon: '🎂', color: 'bg-pink-500' },
-    { name: 'Dizimistas', value: dizimistas.length.toString(), icon: '💰', color: 'bg-yellow-500' },
+    // Estatísticas detalhadas apenas para admin e editor
+    ...(user?.role === 'admin' || user?.role === 'editor' ? [
+      { name: 'Intenções de Missa', value: massIntentions.length.toString(), icon: '🙏', color: 'bg-orange-500' },
+      { name: 'Aniversariantes', value: birthdays.length.toString(), icon: '🎂', color: 'bg-pink-500' },
+      { name: 'Dizimistas', value: dizimistas.length.toString(), icon: '💰', color: 'bg-yellow-500' },
+    ] : []),
+    // Apenas admin pode ver usuários
+    ...(user?.role === 'admin' ? [{ name: 'Usuários', value: users.length.toString(), icon: '👥', color: 'bg-indigo-500' }] : []),
   ];
 
   // Handlers para modais
-  const openCreateModal = (type: 'news' | 'announcement' | 'mass-schedule' | 'parish-info' | 'dizimista' | 'birthday') => {
+  const openCreateModal = (type: 'news' | 'announcement' | 'mass-schedule' | 'parish-info' | 'dizimista' | 'birthday' | 'user' | 'mass-intention') => {
     setModalType(type);
     setEditingItem(null);
     setModalOpen(true);
   };
 
-  const openEditModal = (type: 'news' | 'announcement' | 'mass-schedule' | 'parish-info' | 'dizimista' | 'birthday', item: any) => {
+  const openEditModal = (type: 'news' | 'announcement' | 'mass-schedule' | 'parish-info' | 'dizimista' | 'birthday' | 'user' | 'mass-intention', item: any) => {
     setModalType(type);
     setEditingItem(item);
     setModalOpen(true);
@@ -116,42 +209,133 @@ const DashboardPage = () => {
   // Handlers para CRUD
   const handleCreate = async (formData: any) => {
     if (modalType === 'news') {
-      const result = await createNews(formData);
-      if (result.success) {
-        closeModal();
+      if (editingItem) {
+        // Atualizar notícia existente
+        const result = await updateNews(editingItem.id, formData);
+        if (result.success) {
+          closeModal();
+        } else {
+          alert(result.error);
+        }
       } else {
-        alert(result.error);
+        // Criar nova notícia
+        const result = await createNews(formData);
+        if (result.success) {
+          closeModal();
+        } else {
+          alert(result.error);
+        }
       }
     } else if (modalType === 'announcement') {
-      const result = await createAnnouncement(formData);
-      if (result.success) {
-        closeModal();
+      if (editingItem) {
+        // Atualizar aviso existente
+        const result = await updateAnnouncement(editingItem.id, formData);
+        if (result.success) {
+          closeModal();
+        } else {
+          alert(result.error);
+        }
       } else {
-        alert(result.error);
+        // Criar novo aviso
+        const result = await createAnnouncement(formData);
+        if (result.success) {
+          closeModal();
+        } else {
+          alert(result.error);
+        }
       }
     } else if (modalType === 'mass-schedule') {
-      const result = await createMassSchedule(formData);
-      if (result.success) {
-        closeModal();
+      if (editingItem) {
+        // Atualizar horário de missa existente
+        const result = await updateMassSchedule(editingItem.id, formData);
+        if (result.success) {
+          closeModal();
+        } else {
+          alert(result.error);
+        }
       } else {
-        alert(result.error);
+        // Criar novo horário de missa
+        const result = await createMassSchedule(formData);
+        if (result.success) {
+          closeModal();
+        } else {
+          alert(result.error);
+        }
       }
     } else if (modalType === 'parish-info') {
-      const result = await createParishInfo(formData);
-      if (result.success) {
-        closeModal();
+      if (editingItem) {
+        // Atualizar informação da paróquia existente
+        const result = await updateParishInfo(editingItem.id, formData);
+        if (result.success) {
+          closeModal();
+        } else {
+          alert(result.error);
+        }
       } else {
-        alert(result.error);
+        // Criar nova informação da paróquia
+        const result = await createParishInfo(formData);
+        if (result.success) {
+          closeModal();
+        } else {
+          alert(result.error);
+        }
       }
     } else if (modalType === 'dizimista') {
-      const result = await createDizimista(formData);
-      if (result.success) {
-        closeModal();
+      if (editingItem) {
+        // Atualizar dizimista existente
+        const result = await updateDizimista(editingItem.id, formData);
+        if (result.success) {
+          closeModal();
+        } else {
+          alert(result.error);
+        }
       } else {
-        alert(result.error);
+        // Criar novo dizimista
+        const result = await createDizimista(formData);
+        if (result.success) {
+          closeModal();
+        } else {
+          alert(result.error);
+        }
       }
     } else if (modalType === 'birthday') {
-      const result = await createBirthday(formData);
+      if (editingItem) {
+        // Atualizar aniversariante existente
+        const result = await updateBirthday(editingItem.id, formData);
+        if (result.success) {
+          closeModal();
+        } else {
+          alert(result.error);
+        }
+      } else {
+        // Criar novo aniversariante
+        const result = await createBirthday(formData);
+        if (result.success) {
+          closeModal();
+        } else {
+          alert(result.error);
+        }
+      }
+    } else if (modalType === 'user') {
+      if (editingItem) {
+        // Atualizar usuário existente
+        const result = await updateUser(editingItem.id, formData);
+        if (result.success) {
+          closeModal();
+        } else {
+          alert(result.error);
+        }
+      } else {
+        // Criar novo usuário
+        const result = await createUser(formData);
+        if (result.success) {
+          closeModal();
+        } else {
+          alert(result.error);
+        }
+      }
+    } else if (modalType === 'mass-intention') {
+      const result = await createMassIntention(formData);
       if (result.success) {
         closeModal();
       } else {
@@ -160,55 +344,11 @@ const DashboardPage = () => {
     }
   };
 
-  const handleUpdate = async (formData: any) => {
-    if (modalType === 'news' && editingItem) {
-      const result = await updateNews(editingItem.id, formData);
-      if (result.success) {
-        closeModal();
-      } else {
-        alert(result.error);
-      }
-    } else if (modalType === 'announcement' && editingItem) {
-      const result = await updateAnnouncement(editingItem.id, formData);
-      if (result.success) {
-        closeModal();
-      } else {
-        alert(result.error);
-      }
-    } else if (modalType === 'mass-schedule' && editingItem) {
-      const result = await updateMassSchedule(editingItem.id, formData);
-      if (result.success) {
-        closeModal();
-      } else {
-        alert(result.error);
-      }
-    } else if (modalType === 'parish-info' && editingItem) {
-      const result = await updateParishInfo(editingItem.id, formData);
-      if (result.success) {
-        closeModal();
-      } else {
-        alert(result.error);
-      }
-    } else if (modalType === 'dizimista' && editingItem) {
-      const result = await updateDizimista(editingItem.id, formData);
-      if (result.success) {
-        closeModal();
-      } else {
-        alert(result.error);
-      }
-    } else if (modalType === 'birthday' && editingItem) {
-      const result = await updateBirthday(editingItem.id, formData);
-      if (result.success) {
-        closeModal();
-      } else {
-        alert(result.error);
-      }
-    }
-  };
+
 
   const handleDeleteNews = async (item: any) => {
     if (window.confirm('Tem certeza que deseja excluir esta notícia?')) {
-      const result = await deleteNews(item.id);
+      const result = await deleteNewsFromHook(item.id);
       if (!result.success) {
         alert(result.error);
       }
@@ -217,7 +357,7 @@ const DashboardPage = () => {
 
   const handleDeleteAnnouncement = async (item: any) => {
     if (window.confirm('Tem certeza que deseja excluir este aviso?')) {
-      const result = await deleteAnnouncement(item.id);
+      const result = await deleteAnnouncementFromHook(item.id);
       if (!result.success) {
         alert(result.error);
       }
@@ -226,7 +366,7 @@ const DashboardPage = () => {
 
   const handleDeleteMassSchedule = async (item: any) => {
     if (window.confirm('Tem certeza que deseja excluir este horário de missa?')) {
-      const result = await deleteMassSchedule(item.id);
+      const result = await deleteMassScheduleFromHook(item.id);
       if (!result.success) {
         alert(result.error);
       }
@@ -235,7 +375,7 @@ const DashboardPage = () => {
 
   const handleDeleteParishInfo = async (item: any) => {
     if (window.confirm('Tem certeza que deseja excluir esta informação da paróquia?')) {
-      const result = await deleteParishInfo(item.id);
+      const result = await deleteParishInfoFromHook(item.id);
       if (!result.success) {
         alert(result.error);
       }
@@ -244,7 +384,7 @@ const DashboardPage = () => {
 
   const handleDeleteDizimista = async (item: any) => {
     if (window.confirm('Tem certeza que deseja excluir este dizimista?')) {
-      const result = await deleteDizimista(item.id);
+      const result = await deleteDizimistaFromHook(item.id);
       if (!result.success) {
         alert(result.error);
       }
@@ -253,10 +393,200 @@ const DashboardPage = () => {
 
   const handleDeleteBirthday = async (item: any) => {
     if (window.confirm('Tem certeza que deseja excluir este aniversariante?')) {
-      const result = await deleteBirthday(item.id);
+      const result = await deleteBirthdayFromHook(item.id);
       if (!result.success) {
         alert(result.error);
       }
+    }
+  };
+
+  const handleDeleteUser = async (item: any) => {
+    if (window.confirm('Tem certeza que deseja excluir este usuário?')) {
+      const result = await deleteUserFromHook(item.id);
+      if (!result.success) {
+        alert(result.error);
+      }
+    }
+  };
+
+  const handleDeleteMassIntention = async (item: any) => {
+    if (window.confirm('Tem certeza que deseja excluir esta intenção de missa?')) {
+      const result = await deleteMassIntentionFromHook(item.id);
+      if (!result.success) {
+        alert(result.error);
+      }
+    }
+  };
+
+  const handleDeleteAllNonRecurring = async () => {
+    if (window.confirm('Tem certeza que deseja excluir TODAS as intenções não recorrentes? Esta ação não pode ser desfeita.')) {
+      const result = await deleteAllNonRecurring();
+      if (result.success) {
+        alert(`${result.deletedCount} intenções não recorrentes foram excluídas.`);
+      } else {
+        alert(result.error);
+      }
+    }
+  };
+
+  const handlePrintReport = async () => {
+    const result = await generatePrintReport(massIntentionFilters);
+    if (result.success && result.data) {
+      const data = result.data as MassIntentionsPrintReportData;
+      // Abrir nova janela para impressão
+      const printWindow = window.open('', '_blank');
+      if (printWindow) {
+        printWindow.document.write(`
+          <html>
+            <head>
+              <title>Relatório de Intenções de Missa</title>
+              <style>
+                body { font-family: Arial, sans-serif; margin: 20px; }
+                .header { text-align: center; margin-bottom: 30px; }
+                .info { margin-bottom: 20px; }
+                .intention-type { margin-bottom: 30px; }
+                .intention-type h3 { background-color: #f2f2f2; padding: 10px; margin-bottom: 15px; }
+                .intention-item { margin-bottom: 10px; padding: 10px; border-left: 3px solid #007bff; background-color: #f8f9fa; }
+                .intention-notes { font-style: italic; color: #666; }
+                .recurring { border-left-color: #28a745; }
+                .inactive { opacity: 0.6; }
+              </style>
+            </head>
+            <body>
+              <div class="header">
+                <h1>${data.title}</h1>
+                <p>${data.parish}</p>
+              </div>
+              <div class="info">
+                <p><strong>Gerado em:</strong> ${data.generatedAt}</p>
+                <p><strong>Total de intenções:</strong> ${data.total}</p>
+              </div>
+                                ${Object.entries(data.groupedByType).map(([type, intentions]) => `
+                    <div class="intention-type">
+                      <h3>${type}</h3>
+                      ${intentions.map((intention) => `
+                        <div class="intention-item ${intention.is_recurring ? 'recurring' : ''}">
+                          <div class="intention-notes">${intention.notes || 'Sem observações'}</div>
+                        </div>
+                      `).join('')}
+                    </div>
+                  `).join('')}
+            </body>
+          </html>
+        `);
+        printWindow.document.close();
+        printWindow.print();
+      }
+    } else {
+      alert(result.error);
+    }
+  };
+
+  const handlePrintAnnouncements = async () => {
+    const result = await generateAnnouncementsPrintReport();
+    if (result.success && result.data) {
+      const data = result.data as AnnouncementsPrintReportData;
+      const printWindow = window.open('', '_blank');
+      if (printWindow) {
+        printWindow.document.write(`
+          <html>
+            <head>
+              <title>${data.title}</title>
+              <style>
+                body { font-family: Arial, sans-serif; margin: 20px; }
+                .header { text-align: center; margin-bottom: 30px; }
+                .info { margin-bottom: 20px; }
+                .announcement { margin-bottom: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+                .announcement h3 { margin-top: 0; color: #333; }
+                .announcement-content { line-height: 1.6; }
+                .announcement-meta { font-size: 12px; color: #666; margin-top: 10px; }
+              </style>
+            </head>
+            <body>
+              <div class="header">
+                <h1>${data.title}</h1>
+                <p>${data.parish}</p>
+              </div>
+              <div class="info">
+                <p><strong>Gerado em:</strong> ${data.generatedAt}</p>
+                <p><strong>Total de avisos:</strong> ${data.total}</p>
+              </div>
+              ${data.items.map((announcement) => `
+                <div class="announcement">
+                  <h3>${announcement.title}</h3>
+                  <div class="announcement-content">${announcement.content}</div>
+                  <div class="announcement-meta">
+                    <strong>Período:</strong> ${new Date(announcement.week_start).toLocaleDateString('pt-BR')} a ${new Date(announcement.week_end).toLocaleDateString('pt-BR')}
+                  </div>
+                </div>
+              `).join('')}
+            </body>
+          </html>
+        `);
+        printWindow.document.close();
+        printWindow.print();
+      }
+    } else {
+      alert(result.error);
+    }
+  };
+
+  const handlePrintMassSchedule = async () => {
+    const result = await generateMassSchedulePrintReport();
+    if (result.success && result.data) {
+      const data = result.data as MassSchedulePrintReportData;
+      const printWindow = window.open('', '_blank');
+      if (printWindow) {
+        printWindow.document.write(`
+          <html>
+            <head>
+              <title>${data.title}</title>
+              <style>
+                body { font-family: Arial, sans-serif; margin: 20px; }
+                .header { text-align: center; margin-bottom: 30px; }
+                .info { margin-bottom: 20px; }
+                .schedule-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+                .day-schedule { border: 1px solid #ddd; border-radius: 8px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+                .day-title { font-size: 18px; font-weight: bold; margin-bottom: 15px; text-align: center; }
+                .mass-time { background: rgba(255,255,255,0.2); padding: 10px; margin: 8px 0; border-radius: 5px; text-align: center; }
+                .mass-description { font-size: 14px; margin-top: 5px; opacity: 0.9; }
+              </style>
+            </head>
+            <body>
+              <div class="header">
+                <h1>${data.title}</h1>
+                <p>${data.parish}</p>
+              </div>
+              <div class="info">
+                <p><strong>Gerado em:</strong> ${data.generatedAt}</p>
+                <p><strong>Total de horários:</strong> ${data.total}</p>
+              </div>
+              <div class="schedule-grid">
+                ${['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'].map((dayName, index) => {
+                  const daySchedules = data.items.filter((schedule) => schedule.day_of_week === index);
+                  if (daySchedules.length === 0) return '';
+                  
+                  return `
+                    <div class="day-schedule">
+                      <div class="day-title">${dayName}</div>
+                      ${daySchedules.map((schedule) => `
+                        <div class="mass-time">
+                          <strong>${schedule.time}</strong>
+                          ${schedule.description ? `<div class="mass-description">${schedule.description}</div>` : ''}
+                        </div>
+                      `).join('')}
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </body>
+          </html>
+        `);
+        printWindow.document.close();
+        printWindow.print();
+      }
+    } else {
+      alert(result.error);
     }
   };
 
@@ -266,6 +596,12 @@ const DashboardPage = () => {
   };
 
   const renderContent = () => {
+    // Usuários comuns só podem ver a visão geral
+    if (user?.role === 'common' && activeTab !== 'overview') {
+      setActiveTab('overview');
+      return null;
+    }
+
     switch (activeTab) {
       case 'overview':
         return (
@@ -294,7 +630,7 @@ const DashboardPage = () => {
                     <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                       <div className="flex-1">
                         <p className="font-medium text-gray-900 truncate">{item.title}</p>
-                        <p className="text-sm text-gray-500">{new Date(item.createdAt).toLocaleDateString()}</p>
+                        <p className="text-sm text-gray-500">{formatDate(item.createdAt)}</p>
                       </div>
                       <span className={`px-2 py-1 text-xs rounded-full ${item.is_published ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
                         {item.is_published ? 'Publicado' : 'Rascunho'}
@@ -350,7 +686,7 @@ const DashboardPage = () => {
                   { key: 'title', label: 'Título' },
                   { key: 'content', label: 'Conteúdo', render: (value) => value.substring(0, 100) + '...' },
                   { key: 'is_published', label: 'Status', render: (value) => value ? 'Publicado' : 'Rascunho' },
-                  { key: 'createdAt', label: 'Criado em', render: (value) => new Date(value).toLocaleDateString() }
+                  { key: 'createdAt', label: 'Criado em', render: (value) => formatDate(value) }
                 ]}
                 onEdit={(item) => openEditModal('news', item)}
                 onDelete={handleDeleteNews}
@@ -366,12 +702,20 @@ const DashboardPage = () => {
             <div className="p-6 border-b border-gray-200">
               <div className="flex justify-between items-center">
                 <h2 className="text-xl font-semibold text-gray-900">Gerenciar Avisos</h2>
-                <button
-                  onClick={() => openCreateModal('announcement')}
-                  className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
-                >
-                  + Novo Aviso
-                </button>
+                <div className="flex space-x-2">
+                  <button
+                    onClick={handlePrintAnnouncements}
+                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    🖨️ Imprimir
+                  </button>
+                  <button
+                    onClick={() => openCreateModal('announcement')}
+                    className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+                  >
+                    + Novo Aviso
+                  </button>
+                </div>
               </div>
             </div>
             <div className="p-6">
@@ -381,7 +725,7 @@ const DashboardPage = () => {
                   { key: 'title', label: 'Título' },
                   { key: 'content', label: 'Conteúdo', render: (value) => value.substring(0, 100) + '...' },
                   { key: 'is_active', label: 'Status', render: (value) => value ? 'Ativo' : 'Inativo' },
-                  { key: 'createdAt', label: 'Criado em', render: (value) => new Date(value).toLocaleDateString() }
+                  { key: 'createdAt', label: 'Criado em', render: (value) => formatDate(value) }
                 ]}
                 onEdit={(item) => openEditModal('announcement', item)}
                 onDelete={handleDeleteAnnouncement}
@@ -397,12 +741,20 @@ const DashboardPage = () => {
             <div className="p-6 border-b border-gray-200">
               <div className="flex justify-between items-center">
                 <h2 className="text-xl font-semibold text-gray-900">Gerenciar Horários de Missa</h2>
-                <button
-                  onClick={() => openCreateModal('mass-schedule')}
-                  className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors"
-                >
-                  + Novo Horário
-                </button>
+                <div className="flex space-x-2">
+                  <button
+                    onClick={handlePrintMassSchedule}
+                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    🖨️ Imprimir
+                  </button>
+                  <button
+                    onClick={() => openCreateModal('mass-schedule')}
+                    className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors"
+                  >
+                    + Novo Horário
+                  </button>
+                </div>
               </div>
             </div>
             <div className="p-6">
@@ -410,7 +762,7 @@ const DashboardPage = () => {
                 data={massSchedules}
                 columns={[
                   { key: 'day_of_week', label: 'Dia', render: (value) => getDayName(value) },
-                  { key: 'time', label: 'Horário' },
+                  { key: 'time', label: 'Horário', render: (value) => formatTime(value) },
                   { key: 'is_active', label: 'Status', render: (value) => value ? 'Ativo' : 'Inativo' }
                 ]}
                 onEdit={(item) => openEditModal('mass-schedule', item)}
@@ -440,7 +792,13 @@ const DashboardPage = () => {
                 data={birthdays}
                 columns={[
                   { key: 'name', label: 'Nome' },
-                  { key: 'birth_date', label: 'Data de Nascimento' },
+                  { key: 'birth_date', label: 'Data de Nascimento', render: (value) => {
+                    const date = new Date(value);
+                    const day = String(date.getDate()).padStart(2, '0');
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const year = date.getFullYear();
+                    return `${day}/${month}/${year}`;
+                  } },
                   { key: 'is_active', label: 'Status', render: (value) => value ? 'Ativo' : 'Inativo' }
                 ]}
                 onEdit={(item) => openEditModal('birthday', item)}
@@ -513,6 +871,134 @@ const DashboardPage = () => {
           </div>
         );
 
+      case 'mass-intentions':
+        return (
+          <div className="bg-white rounded-xl shadow-lg">
+            <div className="p-6 border-b border-gray-200">
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-semibold text-gray-900">Gerenciar Intenções de Missa</h2>
+                <div className="flex space-x-2">
+                  <button
+                    onClick={handlePrintReport}
+                    className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+                  >
+                    🖨️ Imprimir
+                  </button>
+                  <button
+                    onClick={handleDeleteAllNonRecurring}
+                    className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+                  >
+                    🗑️ Excluir Não Recorrentes
+                  </button>
+                  <button
+                    onClick={() => openCreateModal('mass-intention')}
+                    className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition-colors"
+                  >
+                    + Nova Intenção
+                  </button>
+                </div>
+              </div>
+              
+              {/* Filtros */}
+              <div className="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4">
+                <input
+                  type="text"
+                  placeholder="Buscar..."
+                  value={massIntentionFilters.search}
+                  onChange={(e) => setMassIntentionFilters(prev => ({ ...prev, search: e.target.value }))}
+                  className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                />
+                <select
+                  value={massIntentionFilters.filter_type || ''}
+                  onChange={(e) => setMassIntentionFilters(prev => ({ 
+                    ...prev, 
+                    filter_type: e.target.value as 'thanksgiving' | 'deceased' | undefined || undefined 
+                  }))}
+                  className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                >
+                  <option value="">Todos os tipos</option>
+                  <option value="thanksgiving">Ação de Graças</option>
+                  <option value="deceased">Falecidos</option>
+                </select>
+                <select
+                  value={massIntentionFilters.filter_recurring === undefined ? '' : massIntentionFilters.filter_recurring.toString()}
+                  onChange={(e) => setMassIntentionFilters(prev => ({ 
+                    ...prev, 
+                    filter_recurring: e.target.value === '' ? undefined : e.target.value === 'true'
+                  }))}
+                  className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                >
+                  <option value="">Todas</option>
+                  <option value="true">Apenas recorrentes</option>
+                  <option value="false">Apenas não recorrentes</option>
+                </select>
+                <button
+                  onClick={() => setMassIntentionFilters({ search: '', filter_type: undefined, filter_recurring: undefined })}
+                  className="px-3 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+                >
+                  Limpar Filtros
+                </button>
+              </div>
+            </div>
+            <div className="p-6">
+              <DataTable
+                data={massIntentions}
+                columns={[
+                  { key: 'intention_type', label: 'Tipo', render: (value) => value === 'thanksgiving' ? 'Ação de Graças' : 'Falecidos' },
+                  { key: 'notes', label: 'Observação', render: (value) => value ? value.substring(0, 100) + '...' : '-' },
+                  { key: 'is_recurring', label: 'Recorrente', render: (value) => value ? 'Sim' : 'Não' },
+                  { key: 'created_at', label: 'Criado em', render: (value) => formatDate(value) }
+                ]}
+                onEdit={(item) => openEditModal('mass-intention', item)}
+                onDelete={handleDeleteMassIntention}
+                loading={massIntentionsLoading}
+              />
+            </div>
+          </div>
+        );
+
+      case 'users':
+        console.log('Renderizando aba de usuários');
+        console.log('Dados dos usuários:', users);
+        console.log('Loading:', usersLoading);
+        return (
+          <div className="bg-white rounded-xl shadow-lg">
+            <div className="p-6 border-b border-gray-200">
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-semibold text-gray-900">Gerenciar Usuários</h2>
+                <button
+                  onClick={() => openCreateModal('user')}
+                  className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
+                >
+                  + Novo Usuário
+                </button>
+              </div>
+            </div>
+            <div className="p-6">
+              <DataTable
+                data={users}
+                columns={[
+                  { key: 'name', label: 'Nome' },
+                  { key: 'email', label: 'Email' },
+                  { key: 'role', label: 'Papel', render: (value) => {
+                    const roleLabels: Record<string, string> = {
+                      admin: 'Administrador',
+                      editor: 'Redator',
+                      common: 'Comum'
+                    };
+                    return roleLabels[value as string] || value;
+                  }},
+                  { key: 'is_active', label: 'Status', render: (value) => value ? 'Ativo' : 'Inativo' },
+                  { key: 'last_login', label: 'Último Login', render: (value) => value ? formatDate(value) : 'Nunca' }
+                ]}
+                onEdit={(item) => openEditModal('user', item)}
+                onDelete={handleDeleteUser}
+                loading={usersLoading}
+              />
+            </div>
+          </div>
+        );
+
       default:
         return <div>Seção não encontrada</div>;
     }
@@ -520,8 +1006,10 @@ const DashboardPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
+
+
       {/* Sidebar */}
-      <div className={`fixed left-0 top-0 h-full bg-white shadow-lg transition-all duration-300 z-30 ${sidebarCollapsed ? 'w-16' : 'w-64'}`}>
+      <div className={`fixed left-0 top-0 h-full bg-white shadow-lg transition-all duration-300 z-30 ${sidebarCollapsed ? 'w-16' : 'w-64'}`} style={{border: '2px solid red'}}>
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="p-4 border-b border-gray-200">
@@ -600,51 +1088,40 @@ const DashboardPage = () => {
 
       {/* Modal */}
       {modalOpen && (
-        <Modal 
-          isOpen={modalOpen} 
+        <Modal
+          isOpen={modalOpen}
           onClose={closeModal}
-          title={editingItem ? `Editar ${modalType === 'news' ? 'Notícia' : modalType === 'announcement' ? 'Aviso' : modalType === 'mass-schedule' ? 'Horário de Missa' : modalType === 'parish-info' ? 'Informação da Paróquia' : modalType === 'dizimista' ? 'Dizimista' : 'Aniversariante'}` : `Novo ${modalType === 'news' ? 'Notícia' : modalType === 'announcement' ? 'Aviso' : modalType === 'mass-schedule' ? 'Horário de Missa' : modalType === 'parish-info' ? 'Informação da Paróquia' : modalType === 'dizimista' ? 'Dizimista' : 'Aniversariante'}`}
+          title={
+            modalType === 'news' ? (editingItem ? 'Editar Notícia' : 'Nova Notícia') :
+            modalType === 'announcement' ? (editingItem ? 'Editar Aviso' : 'Novo Aviso') :
+            modalType === 'mass-schedule' ? (editingItem ? 'Editar Horário' : 'Novo Horário') :
+            modalType === 'parish-info' ? (editingItem ? 'Editar Informação' : 'Nova Informação') :
+            modalType === 'dizimista' ? (editingItem ? 'Editar Dizimista' : 'Novo Dizimista') :
+            modalType === 'birthday' ? (editingItem ? 'Editar Aniversariante' : 'Novo Aniversariante') :
+            modalType === 'user' ? (editingItem ? 'Editar Usuário' : 'Novo Usuário') :
+            'Modal'
+          }
+          size={modalType === 'news' ? 'xl' : 'lg'}
         >
-          {modalType === 'news' && (
-            <NewsForm
-              news={editingItem}
-              onSubmit={editingItem ? handleUpdate : handleCreate}
-              onCancel={closeModal}
-            />
-          )}
-          {modalType === 'announcement' && (
-            <AnnouncementForm
-              announcement={editingItem}
-              onSubmit={editingItem ? handleUpdate : handleCreate}
-              onCancel={closeModal}
-            />
-          )}
-          {modalType === 'mass-schedule' && (
-            <MassScheduleForm
-              massSchedule={editingItem}
-              onSubmit={editingItem ? handleUpdate : handleCreate}
-              onCancel={closeModal}
-            />
-          )}
-          {modalType === 'parish-info' && (
-            <ParishInfoForm
-              parishInfo={editingItem}
-              onSubmit={editingItem ? handleUpdate : handleCreate}
-              onCancel={closeModal}
-            />
-          )}
-          {modalType === 'dizimista' && (
-            <DizimistaForm
-              dizimista={editingItem}
-              onSubmit={editingItem ? handleUpdate : handleCreate}
-              onCancel={closeModal}
-            />
-          )}
-          {modalType === 'birthday' && (
-            <BirthdayForm
-              birthday={editingItem}
-              onSubmit={editingItem ? handleUpdate : handleCreate}
-              onCancel={closeModal}
+          {modalType === 'news' && <NewsForm news={editingItem} onSubmit={handleCreate} onCancel={closeModal} />}
+          {modalType === 'announcement' && <AnnouncementForm announcement={editingItem} onSubmit={handleCreate} onCancel={closeModal} />}
+          {modalType === 'mass-schedule' && <MassScheduleForm massSchedule={editingItem} onSubmit={handleCreate} onCancel={closeModal} />}
+          {modalType === 'parish-info' && <ParishInfoForm parishInfo={editingItem} onSubmit={handleCreate} onCancel={closeModal} />}
+          {modalType === 'dizimista' && <DizimistaForm dizimista={editingItem} onSubmit={handleCreate} onCancel={closeModal} />}
+          {modalType === 'birthday' && <BirthdayForm birthday={editingItem} onSubmit={handleCreate} onCancel={closeModal} />}
+          {modalType === 'user' && <UserForm user={editingItem} onSubmit={handleCreate} onCancel={closeModal} />}
+          {modalType === 'mass-intention' && (
+            <MassIntentionForm 
+              massIntention={editingItem} 
+              onSubmit={editingItem ? async (data: any) => {
+                const result = await updateMassIntention(editingItem.id, data);
+                if (result.success) {
+                  closeModal();
+                } else {
+                  alert(result.error);
+                }
+              } : handleCreate} 
+              onCancel={closeModal} 
             />
           )}
         </Modal>
@@ -672,9 +1149,9 @@ const NewsForm: React.FC<{
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-6 w-full max-w-4xl">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
           Título *
         </label>
         <input
@@ -682,33 +1159,37 @@ const NewsForm: React.FC<{
           required
           value={formData.title}
           onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-church-blue"
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-church-blue text-base"
+          placeholder="Digite o título da notícia"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
           Resumo
         </label>
         <textarea
           value={formData.excerpt}
           onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
-          rows={3}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-church-blue"
+          rows={4}
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-church-blue text-base resize-y"
+          placeholder="Digite um resumo da notícia (opcional)"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
           Conteúdo *
         </label>
-        <RichTextEditor
-          value={formData.content}
-          onChange={(html) => setFormData({ ...formData, content: html })}
-          height="250px"
-          minHeight="200px"
-          maxHeight="500px"
-        />
+        <div className="border border-gray-300 rounded-lg overflow-hidden">
+          <RichTextEditor
+            value={formData.content}
+            onChange={(html) => setFormData({ ...formData, content: html })}
+            height="400px"
+            minHeight="300px"
+            maxHeight="600px"
+          />
+        </div>
       </div>
 
       <div className="flex items-center mt-6">
@@ -717,24 +1198,24 @@ const NewsForm: React.FC<{
           id="is_published"
           checked={formData.is_published}
           onChange={(e) => setFormData({ ...formData, is_published: e.target.checked })}
-          className="h-4 w-4 text-church-blue focus:ring-church-blue border-gray-300 rounded"
+          className="h-5 w-5 text-church-blue focus:ring-church-blue border-gray-300 rounded"
         />
-        <label htmlFor="is_published" className="ml-2 block text-sm text-gray-900">
+        <label htmlFor="is_published" className="ml-3 block text-sm text-gray-900">
           Publicar imediatamente
         </label>
       </div>
 
-      <div className="flex justify-end space-x-3 pt-6">
+      <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
         <button
           type="button"
           onClick={onCancel}
-          className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+          className="px-6 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
         >
           Cancelar
         </button>
         <button
           type="submit"
-          className="btn-primary"
+          className="btn-primary px-6 py-3"
         >
           {news ? 'Atualizar' : 'Criar'}
         </button>
@@ -1152,9 +1633,16 @@ const BirthdayForm: React.FC<{
   onSubmit: (data: any) => void;
   onCancel: () => void;
 }> = ({ birthday, onSubmit, onCancel }) => {
+  // Formatar a data para o formato YYYY-MM-DD que o input type="date" espera
+  const formatDateForInput = (dateString: string) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toISOString().split('T')[0];
+  };
+
   const [formData, setFormData] = useState({
     name: birthday?.name || '',
-    birth_date: birthday?.birth_date || '',
+    birth_date: formatDateForInput(birthday?.birth_date || ''),
     is_active: birthday?.is_active ?? true
   });
 
@@ -1217,6 +1705,271 @@ const BirthdayForm: React.FC<{
           className="btn-primary"
         >
           {birthday ? 'Atualizar' : 'Criar'}
+        </button>
+      </div>
+    </form>
+  );
+};
+
+// Adicionar o formulário de usuário no final do arquivo
+const UserForm: React.FC<{
+  user?: User;
+  onSubmit: (data: any) => void;
+  onCancel: () => void;
+}> = ({ user, onSubmit, onCancel }) => {
+  const [formData, setFormData] = useState<{
+    name: string;
+    email: string;
+    password?: string;
+    role: 'admin' | 'editor' | 'common';
+    is_active: boolean;
+  }>({
+    name: user?.name || '',
+    email: user?.email || '',
+    password: '',
+    role: user?.role || 'common',
+    is_active: user?.is_active ?? true
+  });
+
+  const [showPasswordChange, setShowPasswordChange] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const { changeUserPassword } = useUsers();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const submitData: any = { ...formData };
+    if (!user && !submitData.password) {
+      alert('Senha é obrigatória para novos usuários');
+      return;
+    }
+    if (user && !submitData.password) {
+      delete submitData.password;
+    }
+    onSubmit(submitData);
+  };
+
+  const handlePasswordChange = async () => {
+    if (!newPassword.trim()) {
+      alert('Digite uma nova senha');
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      alert('A senha deve ter pelo menos 6 caracteres');
+      return;
+    }
+
+    const result = await changeUserPassword(user!.id, newPassword);
+    if (result.success) {
+      alert('Senha alterada com sucesso!');
+      setNewPassword('');
+      setShowPasswordChange(false);
+    } else {
+      alert(result.error);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Nome *
+          </label>
+          <input
+            type="text"
+            required
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-church-blue"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Email *
+          </label>
+          <input
+            type="email"
+            required
+            value={formData.email}
+            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-church-blue"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            {user ? 'Nova Senha (deixe em branco para manter)' : 'Senha *'}
+          </label>
+          <input
+            type="password"
+            required={!user}
+            value={formData.password}
+            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-church-blue"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Papel *
+          </label>
+          <select
+            value={formData.role}
+            onChange={(e) => setFormData({ ...formData, role: e.target.value as any })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-church-blue"
+          >
+            <option value="common">Comum</option>
+            <option value="editor">Redator</option>
+            <option value="admin">Administrador</option>
+          </select>
+        </div>
+
+        <div className="flex items-center">
+          <input
+            type="checkbox"
+            id="is_active"
+            checked={formData.is_active}
+            onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+            className="h-4 w-4 text-church-blue focus:ring-church-blue border-gray-300 rounded"
+          />
+          <label htmlFor="is_active" className="ml-2 block text-sm text-gray-900">
+            Ativo
+          </label>
+        </div>
+
+        <div className="flex justify-end space-x-3 pt-4">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            className="btn-primary"
+          >
+            {user ? 'Atualizar' : 'Criar'}
+          </button>
+        </div>
+      </form>
+
+      {/* Seção de alteração de senha para usuários existentes */}
+      {user && (
+        <div className="border-t border-gray-200 pt-6">
+          <div className="flex items-center justify-between mb-4">
+            <h4 className="text-lg font-medium text-gray-900">Alterar Senha</h4>
+            <button
+              type="button"
+              onClick={() => setShowPasswordChange(!showPasswordChange)}
+              className="text-sm text-blue-600 hover:text-blue-800"
+            >
+              {showPasswordChange ? 'Cancelar' : 'Alterar Senha'}
+            </button>
+          </div>
+
+          {showPasswordChange && (
+            <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Nova Senha *
+                </label>
+                <input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Digite a nova senha"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-church-blue"
+                />
+              </div>
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={handlePasswordChange}
+                  className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700"
+                >
+                  Alterar Senha
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+const MassIntentionForm: React.FC<{
+  massIntention?: MassIntention;
+  onSubmit: (data: MassIntentionFormData) => void;
+  onCancel: () => void;
+}> = ({ massIntention, onSubmit, onCancel }) => {
+  const [formData, setFormData] = useState<MassIntentionFormData>({
+    intention_type: massIntention?.intention_type || 'thanksgiving',
+    notes: massIntention?.notes || '',
+    is_recurring: massIntention?.is_recurring || false,
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit(formData);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Tipo *</label>
+        <select
+          required
+          value={formData.intention_type}
+          onChange={e => setFormData({ ...formData, intention_type: e.target.value as 'thanksgiving' | 'deceased' })}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+        >
+          <option value="thanksgiving">Ação de Graças</option>
+          <option value="deceased">Falecidos</option>
+        </select>
+      </div>
+      
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Observação *</label>
+        <textarea
+          required
+          value={formData.notes}
+          onChange={e => setFormData({ ...formData, notes: e.target.value })}
+          rows={4}
+          placeholder="Digite a intenção da missa"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+        />
+      </div>
+
+      <div className="flex items-center">
+        <input
+          type="checkbox"
+          id="is_recurring"
+          checked={formData.is_recurring}
+          onChange={e => setFormData({ ...formData, is_recurring: e.target.checked })}
+          className="h-4 w-4 text-orange-500 focus:ring-orange-500 border-gray-300 rounded"
+        />
+        <label htmlFor="is_recurring" className="ml-2 block text-sm text-gray-900">
+          Recorrente
+        </label>
+      </div>
+
+      <div className="flex justify-end space-x-3 pt-4">
+        <button
+          type="button"
+          onClick={onCancel}
+          className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+        >
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          className="btn-primary"
+        >
+          {massIntention ? 'Atualizar' : 'Criar'}
         </button>
       </div>
     </form>

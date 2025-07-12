@@ -1,7 +1,7 @@
 const express = require('express');
 const { body } = require('express-validator');
 const { parishInfoController } = require('../controllers');
-const { auth, requireRole } = require('../middleware/auth');
+const { authenticateToken, requirePermission } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -39,11 +39,11 @@ router.get('/type/:type', (req, res) => {
 });
 
 // Rotas protegidas (admin/editor)
-router.get('/admin', auth, requireRole(['admin', 'editor']), parishInfoController.getAll);
-router.get('/:id', auth, requireRole(['admin', 'editor']), parishInfoController.getById);
-router.post('/', auth, requireRole(['admin', 'editor']), parishInfoValidation, parishInfoController.create);
-router.put('/:id', auth, requireRole(['admin', 'editor']), parishInfoValidation, parishInfoController.update);
-router.delete('/:id', auth, requireRole(['admin']), parishInfoController.remove);
-router.put('/order', auth, requireRole(['admin', 'editor']), parishInfoController.updateOrder);
+router.get('/admin', authenticateToken, requirePermission('parish-info'), parishInfoController.getAll);
+router.get('/:id', authenticateToken, requirePermission('parish-info'), parishInfoController.getById);
+router.post('/', authenticateToken, requirePermission('parish-info'), parishInfoValidation, parishInfoController.create);
+router.put('/:id', authenticateToken, requirePermission('parish-info'), parishInfoValidation, parishInfoController.update);
+router.delete('/:id', authenticateToken, requirePermission('parish-info'), parishInfoController.remove);
+router.put('/order', authenticateToken, requirePermission('parish-info'), parishInfoController.updateOrder);
 
 module.exports = router; 

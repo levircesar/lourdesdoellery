@@ -2,6 +2,7 @@
 -- Execute este script no banco de dados PostgreSQL
 
 -- Apagar tabelas existentes (se houver)
+DROP TABLE IF EXISTS mass_intentions CASCADE;
 DROP TABLE IF EXISTS parish_info CASCADE;
 DROP TABLE IF EXISTS dizimistas CASCADE;
 DROP TABLE IF EXISTS birthdays CASCADE;
@@ -107,6 +108,17 @@ CREATE TABLE IF NOT EXISTS parish_info (
     UNIQUE(section)
 );
 
+-- Tabela de intenções de missa
+CREATE TABLE IF NOT EXISTS mass_intentions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    intention_type VARCHAR(20) NOT NULL CHECK (intention_type IN ('thanksgiving', 'deceased')),
+    notes TEXT NOT NULL,
+    is_recurring BOOLEAN DEFAULT false,
+    created_by UUID REFERENCES users(id) ON DELETE SET NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Índices para melhor performance
 CREATE INDEX IF NOT EXISTS idx_news_created_by ON news(created_by);
 CREATE INDEX IF NOT EXISTS idx_news_published ON news(is_published, published_at);
@@ -117,6 +129,8 @@ CREATE INDEX IF NOT EXISTS idx_birthdays_active ON birthdays(is_active);
 CREATE INDEX IF NOT EXISTS idx_mass_schedules_day_time ON mass_schedules(day_of_week, time);
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_users_active ON users(is_active);
+CREATE INDEX IF NOT EXISTS idx_mass_intentions_recurring ON mass_intentions(is_recurring);
+CREATE INDEX IF NOT EXISTS idx_mass_intentions_created_by ON mass_intentions(created_by);
 
 -- ========================================
 -- DADOS DE EXEMPLO PARA TODAS AS TABELAS
@@ -254,6 +268,34 @@ VALUES (
   'Nossa Visão',
   'Ser uma paróquia referência em acolhimento, evangelização e serviço à comunidade, formando discípulos missionários comprometidos com o Reino de Deus.',
   true,
+  NOW(),
+  NOW()
+);
+
+-- 12. Intenções de Missa de Exemplo
+INSERT INTO mass_intentions (id, intention_type, notes, is_recurring, created_at, updated_at)
+VALUES 
+(
+  gen_random_uuid(),
+  'thanksgiving',
+  'Ação de graças pela saúde da família Silva',
+  false,
+  NOW(),
+  NOW()
+),
+(
+  gen_random_uuid(),
+  'deceased',
+  'Em memória de João Santos, falecido em 15/01/2024',
+  true,
+  NOW(),
+  NOW()
+),
+(
+  gen_random_uuid(),
+  'thanksgiving',
+  'Ação de graças pela cura de Maria Oliveira',
+  false,
   NOW(),
   NOW()
 );
