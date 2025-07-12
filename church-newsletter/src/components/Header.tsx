@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
+import ThemeToggle from './ThemeToggle';
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -43,7 +44,7 @@ const Header = () => {
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      isScrolled ? 'bg-white/95 backdrop-blur-md shadow-lg -translate-y-full' : 'bg-white/90 backdrop-blur-sm'
+      isScrolled ? 'bg-white/95 dark:bg-gray-900/95 backdrop-blur-md shadow-lg -translate-y-full' : 'bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
@@ -54,8 +55,8 @@ const Header = () => {
                 <span className="text-white font-bold text-lg">✝</span>
               </div>
               <div className="text-center">
-                <h1 className="text-xl font-bold text-church-blue leading-tight">Lourdes do Ellery</h1>
-                <p className="text-xs text-gray-600 leading-tight">Paróquia Nossa Senhora de Lourdes</p>
+                <h1 className="text-xl font-bold text-church-blue dark:text-blue-400 leading-tight">Lourdes do Ellery</h1>
+                <p className="text-xs text-gray-600 dark:text-gray-300 leading-tight">Paróquia Nossa Senhora de Lourdes</p>
               </div>
             </Link>
           </div>
@@ -64,47 +65,51 @@ const Header = () => {
           <nav className="hidden md:flex items-center space-x-8">
             <button
               onClick={() => scrollToSection('news')}
-              className="text-gray-700 hover:text-church-blue transition-colors font-medium"
+              className="text-gray-700 dark:text-gray-300 hover:text-church-blue dark:hover:text-blue-400 transition-colors font-medium"
             >
               Notícias
             </button>
             <button
               onClick={() => scrollToSection('announcements')}
-              className="text-gray-700 hover:text-church-blue transition-colors font-medium"
+              className="text-gray-700 dark:text-gray-300 hover:text-church-blue dark:hover:text-blue-400 transition-colors font-medium"
             >
               Avisos
             </button>
             <button
               onClick={() => scrollToSection('mass-schedule')}
-              className="text-gray-700 hover:text-church-blue transition-colors font-medium"
+              className="text-gray-700 dark:text-gray-300 hover:text-church-blue dark:hover:text-blue-400 transition-colors font-medium"
             >
               Horários
             </button>
             <Link
               to="/communities"
-              className="text-gray-700 hover:text-church-blue transition-colors font-medium"
+              className="text-gray-700 dark:text-gray-300 hover:text-church-blue dark:hover:text-blue-400 transition-colors font-medium"
             >
               Comunidades
             </Link>
             <Link
               to="/parish"
-              className="text-gray-700 hover:text-church-blue transition-colors font-medium"
+              className="text-gray-700 dark:text-gray-300 hover:text-church-blue dark:hover:text-blue-400 transition-colors font-medium"
             >
               Conheça a Paróquia
             </Link>
-            <button
-              onClick={() => navigate('/login')}
-              className="btn-primary px-6 py-2"
-            >
-              Área Restrita
-            </button>
+            <div className="flex items-center space-x-4">
+              <ThemeToggle />
+              <button
+                onClick={() => navigate('/login')}
+                className="btn-primary px-6 py-2"
+              >
+                Área Restrita
+              </button>
+            </div>
           </nav>
 
           {/* Mobile menu button */}
-          <div className="md:hidden">
+          <div className="md:hidden flex items-center space-x-4">
+            <ThemeToggle />
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-700 hover:text-church-blue"
+              className="text-gray-700 dark:text-gray-300 hover:text-church-blue dark:hover:text-blue-400"
             >
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 {isMenuOpen ? (
@@ -119,35 +124,35 @@ const Header = () => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden bg-white/95 backdrop-blur-md border-t border-gray-200">
+          <div className="md:hidden bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-t border-gray-200 dark:border-gray-700">
             <div className="px-2 pt-2 pb-3 space-y-1">
               <button
                 onClick={() => scrollToSection('news')}
-                className="block w-full text-left px-3 py-2 text-gray-700 hover:text-church-blue hover:bg-gray-50 rounded-md font-medium"
+                className="block w-full text-left px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-church-blue dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md font-medium"
               >
                 Notícias
               </button>
               <button
                 onClick={() => scrollToSection('announcements')}
-                className="block w-full text-left px-3 py-2 text-gray-700 hover:text-church-blue hover:bg-gray-50 rounded-md font-medium"
+                className="block w-full text-left px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-church-blue dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md font-medium"
               >
                 Avisos
               </button>
               <button
                 onClick={() => scrollToSection('mass-schedule')}
-                className="block w-full text-left px-3 py-2 text-gray-700 hover:text-church-blue hover:bg-gray-50 rounded-md font-medium"
+                className="block w-full text-left px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-church-blue dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md font-medium"
               >
                 Horários
               </button>
               <Link
                 to="/communities"
-                className="block w-full text-left px-3 py-2 text-gray-700 hover:text-church-blue hover:bg-gray-50 rounded-md font-medium"
+                className="block w-full text-left px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-church-blue dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md font-medium"
               >
                 Comunidades
               </Link>
               <Link
                 to="/parish"
-                className="block w-full text-left px-3 py-2 text-gray-700 hover:text-church-blue hover:bg-gray-50 rounded-md font-medium"
+                className="block w-full text-left px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-church-blue dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md font-medium"
               >
                 Conheça a Paróquia
               </Link>

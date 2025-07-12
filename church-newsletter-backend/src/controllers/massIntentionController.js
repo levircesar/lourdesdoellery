@@ -5,14 +5,11 @@ const { Op } = require('sequelize');
 const getAll = async (req, res) => {
   try {
     const { 
-      page = 1, 
-      limit = 10, 
       search, 
       filter_type,
       filter_recurring
     } = req.query;
     
-    const offset = (page - 1) * limit;
     let whereClause = {};
 
     // Filtro por tipo de intenção
@@ -39,20 +36,13 @@ const getAll = async (req, res) => {
     const { count, rows } = await MassIntention.findAndCountAll({
       where: whereClause,
       include: [{ model: User, as: 'creator', attributes: ['id', 'name', 'email'] }],
-      order: [['created_at', 'DESC']],
-      limit: parseInt(limit),
-      offset: parseInt(offset)
+      order: [['created_at', 'DESC']]
     });
 
     res.json({
       success: true,
       data: rows,
-      pagination: {
-        page: parseInt(page),
-        limit: parseInt(limit),
-        total: count,
-        pages: Math.ceil(count / limit)
-      }
+      total: count
     });
   } catch (error) {
     console.error('Erro ao buscar intenções de missa:', error);

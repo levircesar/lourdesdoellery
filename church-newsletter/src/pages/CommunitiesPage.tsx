@@ -82,6 +82,45 @@ const CommunitiesPage = () => {
       },
       color: "bg-purple-600",
       icon: "🙏"
+    },
+    {
+      id: 3,
+      name: "Amigos de Maria",
+      location: "Fortaleza, Ceará",
+      description: "Os amigos de Maria tem foco na formação espiritual e no serviço aos mais necessitados. Nossa vocação é ser instrumentos de Deus para transformar vidas através da oração e da caridade.",
+      longDescription: "Fundada com o propósito de ser um espaço de encontro com Deus através da oração, adoração e missão. Nossa espiritualidade é centrada na Eucaristia e na devoção a Maria. A comunidade tem como pilares a oração constante, a formação espiritual sólida e o serviço aos mais necessitados. Realizamos missões evangelizadoras, retiros de formação, encontros de oração e ações sociais que transformam vidas e comunidades. Nossa missão é levar a todos a experiência do amor misericordioso de Deus, especialmente aos que mais precisam de acolhimento e esperança.",
+      images: [
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=600&fit=crop",
+        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=800&h=600&fit=crop",
+        "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=800&h=600&fit=crop"
+      ],
+      meetingPlaces: [
+        {
+          name: "Igreja",
+          address: "Rua da Paz, 789 - Aldeota, Fortaleza",
+          schedule: "Segundas e Quartas às 20h"
+        },
+        {
+          name: "Capela Nossa Senhora das Graças",
+          address: "Av. Santos Dumont, 321 - Dionísio Torres, Fortaleza",
+          schedule: "Sábados às 16h"
+        }
+      ],
+      activities: [
+        "Adoração Eucarística",
+        "Missões Evangelizadoras",
+        "Formação Espiritual",
+        "Grupos de Oração",
+        "Ações de Caridade",
+        "Retiros de Conversão"
+      ],
+      contact: {
+        phone: "(85) 88888-8888",
+        email: "fanuel@fortaleza.com",
+        website: "www.amigosmaria.org"
+      },
+      color: "bg-purple-600",
+      icon: "🙏"
     }
   ];
 
@@ -94,7 +133,7 @@ const CommunitiesPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 pt-16">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 pt-16">
       {/* Hero Section */}
       <div className="relative h-96 bg-gradient-to-r from-blue-600 to-purple-700 overflow-hidden">
         <div className="absolute inset-0 bg-black bg-opacity-40"></div>
@@ -117,7 +156,7 @@ const CommunitiesPage = () => {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="space-y-16">
           {communities.map((community) => (
-            <div key={community.id} className="bg-white rounded-2xl shadow-xl overflow-hidden">
+            <div key={community.id} className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden border border-gray-200 dark:border-gray-700">
               {/* Header */}
               <div className={`${community.color} text-white p-8`}>
                 <div className="flex items-center mb-4">
@@ -137,7 +176,7 @@ const CommunitiesPage = () => {
                   <div className="space-y-6">
                     {/* Image Gallery */}
                     <div className="space-y-4">
-                      <h3 className="text-2xl font-bold text-gray-800 mb-4">Galeria de Fotos</h3>
+                      <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">Galeria de Fotos</h3>
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         {community.images.map((image, imgIndex) => (
                           <div 
@@ -160,18 +199,18 @@ const CommunitiesPage = () => {
 
                     {/* Long Description */}
                     <div>
-                      <h3 className="text-2xl font-bold text-gray-800 mb-4">Sobre a Comunidade</h3>
-                      <p className="text-gray-600 leading-relaxed text-lg">{community.longDescription}</p>
+                      <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">Sobre a Comunidade</h3>
+                      <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-lg">{community.longDescription}</p>
                     </div>
 
                     {/* Activities */}
                     <div>
-                      <h3 className="text-2xl font-bold text-gray-800 mb-4">Atividades</h3>
+                      <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">Atividades</h3>
                       <div className="grid grid-cols-2 gap-3">
                         {community.activities.map((activity, actIndex) => (
-                          <div key={actIndex} className="flex items-center p-3 bg-gray-50 rounded-lg">
+                          <div key={actIndex} className="flex items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                             <span className="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
-                            <span className="text-gray-700 font-medium">{activity}</span>
+                            <span className="text-gray-700 dark:text-gray-200 font-medium">{activity}</span>
                           </div>
                         ))}
                       </div>
@@ -182,15 +221,15 @@ const CommunitiesPage = () => {
                   <div className="space-y-6">
                     {/* Meeting Places */}
                     <div>
-                      <h3 className="text-2xl font-bold text-gray-800 mb-4">Locais de Encontro</h3>
+                      <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">Locais de Encontro</h3>
                       <div className="space-y-4">
                         {community.meetingPlaces.map((place, placeIndex) => (
-                          <div key={placeIndex} className="bg-gradient-to-r from-gray-50 to-white p-6 rounded-xl border border-gray-200">
-                            <h4 className="text-lg font-bold text-gray-800 mb-2">{place.name}</h4>
-                            <p className="text-gray-600 mb-2">
+                          <div key={placeIndex} className="bg-gradient-to-r from-gray-50 to-white dark:from-gray-700 dark:to-gray-600 p-6 rounded-xl border border-gray-200 dark:border-gray-600">
+                            <h4 className="text-lg font-bold text-gray-800 dark:text-white mb-2">{place.name}</h4>
+                            <p className="text-gray-600 dark:text-gray-300 mb-2">
                               <span className="font-medium">Endereço:</span> {place.address}
                             </p>
-                            <p className="text-gray-600">
+                            <p className="text-gray-600 dark:text-gray-300">
                               <span className="font-medium">Horário:</span> {place.schedule}
                             </p>
                           </div>
@@ -200,30 +239,23 @@ const CommunitiesPage = () => {
 
                     {/* Contact Information */}
                     <div>
-                      <h3 className="text-2xl font-bold text-gray-800 mb-4">Informações de Contato</h3>
-                      <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-xl">
+                      <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">Informações de Contato</h3>
+                      <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-6 rounded-xl">
                         <div className="space-y-3">
                           <div className="flex items-center">
-                            <span className="text-blue-600 text-xl mr-3">📞</span>
-                            <span className="text-gray-700 font-medium">{community.contact.phone}</span>
+                            <span className="text-blue-600 dark:text-blue-400 text-xl mr-3">📞</span>
+                            <span className="text-gray-700 dark:text-gray-200 font-medium">{community.contact.phone}</span>
                           </div>
                           <div className="flex items-center">
-                            <span className="text-blue-600 text-xl mr-3">✉️</span>
-                            <span className="text-gray-700 font-medium">{community.contact.email}</span>
+                            <span className="text-blue-600 dark:text-blue-400 text-xl mr-3">✉️</span>
+                            <span className="text-gray-700 dark:text-gray-200 font-medium">{community.contact.email}</span>
                           </div>
                           <div className="flex items-center">
-                            <span className="text-blue-600 text-xl mr-3">🌐</span>
-                            <span className="text-gray-700 font-medium">{community.contact.website}</span>
+                            <span className="text-blue-600 dark:text-blue-400 text-xl mr-3">🌐</span>
+                            <span className="text-gray-700 dark:text-gray-200 font-medium">{community.contact.website}</span>
                           </div>
                         </div>
                       </div>
-                    </div>
-
-                    {/* Call to Action */}
-                    <div className="text-center">
-                      <button className={`${community.color} text-white px-8 py-3 rounded-full font-semibold hover:opacity-90 transition-opacity duration-300`}>
-                        Entre em Contato
-                      </button>
                     </div>
                   </div>
                 </div>
@@ -231,31 +263,15 @@ const CommunitiesPage = () => {
             </div>
           ))}
         </div>
-
-        {/* Call to Action Section */}
-        <div className="text-center mt-16">
-          <div className="bg-gradient-to-r from-blue-600 to-purple-700 rounded-2xl p-8 text-white">
-            <h3 className="text-3xl font-bold mb-4">
-              Venha Fazer Parte de Nossa Família!
-            </h3>
-            <p className="text-xl mb-6">
-              Junte-se a uma de nossas comunidades e descubra como sua fé pode florescer
-            </p>
-            <button className="bg-white text-blue-600 px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors duration-300">
-              Saiba Mais
-            </button>
-          </div>
-        </div>
       </div>
 
       {/* Image Modal */}
       {selectedImage && (
         <ImageModal
-          isOpen={true}
-          onClose={closeImageModal}
           images={selectedImage.images}
-          initialIndex={selectedImage.index}
+          currentIndex={selectedImage.index}
           title={selectedImage.title}
+          onClose={closeImageModal}
         />
       )}
 

@@ -183,7 +183,7 @@ const ParishPage = () => {
     : parishPhotos.filter(photo => photo.category === selectedCategory);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Hero Section */}
       <div className="relative h-96 bg-gradient-to-r from-blue-600 to-purple-700 overflow-hidden">
         <div className="absolute inset-0 bg-black bg-opacity-40"></div>
@@ -205,16 +205,16 @@ const ParishPage = () => {
       {/* Introduction Section */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-800 mb-6">
+          <h2 className="text-4xl font-bold text-gray-800 dark:text-white mb-6">
             Bem-vindo à Nossa Comunidade
           </h2>
           <div className="max-w-4xl mx-auto">
-            <p className="text-lg text-gray-600 leading-relaxed mb-6">
+            <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
               Fundada em 1960, nossa paróquia é uma comunidade de fé dedicada ao serviço, 
               à evangelização e à promoção dos valores cristãos. Inspirados por Nossa Senhora de Lourdes, 
               buscamos acolher, evangelizar e servir a todos, promovendo a comunhão e o crescimento espiritual.
             </p>
-            <p className="text-lg text-gray-600 leading-relaxed">
+            <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
               Nossa missão é ser uma igreja acolhedora, missionária e comprometida com a transformação social, 
               sempre guiada pelos ensinamentos de Cristo e pela intercessão de Maria.
             </p>
@@ -222,18 +222,18 @@ const ParishPage = () => {
         </div>
 
         {/* Nossa Senhora de Lourdes Section */}
-        <div className="bg-white rounded-2xl shadow-xl p-8 mb-16 transform hover:scale-105 transition-transform duration-300">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 mb-16 transform hover:scale-105 transition-transform duration-300 border border-gray-200 dark:border-gray-700">
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div className="text-center md:text-left">
-              <h3 className="text-3xl font-bold text-blue-600 mb-4">
+              <h3 className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-4">
                 Nossa Senhora de Lourdes
               </h3>
-              <p className="text-gray-600 leading-relaxed mb-4">
+              <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
                 Nossa padroeira, que apareceu a Santa Bernadette em 1858, nos inspira com sua mensagem 
                 de conversão, penitência e oração. Sua intercessão fortalece nossa comunidade e nos 
                 guia no caminho da fé.
               </p>
-              <p className="text-gray-600 leading-relaxed">
+              <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
                 "Eu sou a Imaculada Conceição" - estas palavras ecoam em nossos corações e nos 
                 lembram da pureza e graça que devemos buscar em nossas vidas.
               </p>
@@ -253,18 +253,18 @@ const ParishPage = () => {
 
         {/* Clergy Section */}
         <div className="mb-16">
-          <h2 className="text-4xl font-bold text-center text-gray-800 mb-12">
+          <h2 className="text-4xl font-bold text-center text-gray-800 dark:text-white mb-12">
             Nossa Equipe Pastoral
           </h2>
           
           {/* Priests */}
           <div className="mb-12">
-            <h3 className="text-3xl font-bold text-blue-600 text-center mb-8">
+            <h3 className="text-3xl font-bold text-blue-600 dark:text-blue-400 text-center mb-8">
               Padres
             </h3>
             <div className="grid md:grid-cols-2 gap-8">
               {priests.map((priest) => (
-                <div key={priest.id} className="bg-white rounded-2xl shadow-lg p-6 transform hover:scale-105 transition-all duration-300">
+                <div key={priest.id} className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 transform hover:scale-105 transition-all duration-300 border border-gray-200 dark:border-gray-700">
                   <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
                     <div className="relative">
                       <div 
@@ -285,9 +285,9 @@ const ParishPage = () => {
                       </div>
                     </div>
                     <div className="flex-1 text-center md:text-left">
-                      <h4 className="text-2xl font-bold text-gray-800 mb-2">{priest.name}</h4>
-                      <p className="text-blue-600 font-semibold mb-3">{priest.role}</p>
-                      <p className="text-gray-600 mb-4 leading-relaxed">{priest.description}</p>
+                      <h4 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">{priest.name}</h4>
+                      <p className="text-blue-600 dark:text-blue-400 font-semibold mb-3">{priest.role}</p>
+                      <p className="text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">{priest.description}</p>
                       <div className="flex flex-wrap gap-2 justify-center md:justify-start">
                         {priest.specialties.map((specialty, index) => (
                           <span key={index} className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
@@ -304,12 +304,12 @@ const ParishPage = () => {
 
           {/* Deacons */}
           <div>
-            <h3 className="text-3xl font-bold text-purple-600 text-center mb-8">
+            <h3 className="text-3xl font-bold text-purple-600 dark:text-purple-400 text-center mb-8">
               Diáconos
             </h3>
             <div className="grid md:grid-cols-2 gap-8">
               {deacons.map((deacon) => (
-                <div key={deacon.id} className="bg-white rounded-2xl shadow-lg p-6 transform hover:scale-105 transition-all duration-300">
+                <div key={deacon.id} className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 transform hover:scale-105 transition-all duration-300 border border-gray-200 dark:border-gray-700">
                   <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
                     <div className="relative">
                       <div 
@@ -330,9 +330,9 @@ const ParishPage = () => {
                       </div>
                     </div>
                     <div className="flex-1 text-center md:text-left">
-                      <h4 className="text-2xl font-bold text-gray-800 mb-2">{deacon.name}</h4>
-                      <p className="text-purple-600 font-semibold mb-3">{deacon.role}</p>
-                      <p className="text-gray-600 mb-4 leading-relaxed">{deacon.description}</p>
+                      <h4 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">{deacon.name}</h4>
+                      <p className="text-purple-600 dark:text-purple-400 font-semibold mb-3">{deacon.role}</p>
+                      <p className="text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">{deacon.description}</p>
                       <div className="flex flex-wrap gap-2 justify-center md:justify-start">
                         {deacon.specialties.map((specialty, index) => (
                           <span key={index} className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium">
@@ -350,20 +350,20 @@ const ParishPage = () => {
 
         {/* Projects Section */}
         <div>
-          <h2 className="text-4xl font-bold text-center text-gray-800 mb-12">
+          <h2 className="text-4xl font-bold text-center text-gray-800 dark:text-white mb-12">
             Nossos Projetos e Pastorais
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {projects.map((project) => (
-              <div key={project.id} className="bg-white rounded-2xl shadow-lg p-6 transform hover:scale-105 transition-all duration-300 hover:shadow-xl">
+              <div key={project.id} className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 transform hover:scale-105 transition-all duration-300 hover:shadow-xl border border-gray-200 dark:border-gray-700">
                 <div className="text-center mb-4">
                   <div className="text-4xl mb-3">{project.icon}</div>
-                  <h3 className="text-xl font-bold text-gray-800 mb-2">{project.name}</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">{project.description}</p>
+                  <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">{project.name}</h3>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">{project.description}</p>
                 </div>
                 <div className="space-y-2">
-                  <h4 className="font-semibold text-gray-700 text-sm">Atividades:</h4>
-                  <ul className="text-sm text-gray-600 space-y-1">
+                  <h4 className="font-semibold text-gray-700 dark:text-gray-300 text-sm">Atividades:</h4>
+                  <ul className="text-sm text-gray-600 dark:text-gray-300 space-y-1">
                     {project.activities.map((activity, index) => (
                       <li key={index} className="flex items-center">
                         <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
@@ -380,10 +380,10 @@ const ParishPage = () => {
         {/* Galeria de Fotos */}
         <div className="mb-20">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-800 mb-6">
+            <h2 className="text-4xl font-bold text-gray-800 dark:text-white mb-6">
               Galeria de Fotos
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
               Conheça nossa paróquia através de imagens que capturam a beleza da nossa comunidade e as atividades que realizamos
             </p>
           </div>
@@ -397,7 +397,7 @@ const ParishPage = () => {
                 className={`px-5 py-2.5 rounded-full font-medium transition-all duration-300 text-sm ${
                   selectedCategory === category
                     ? 'bg-blue-600 text-white shadow-lg transform scale-105'
-                    : 'bg-white text-gray-600 hover:bg-gray-50 hover:text-blue-600 shadow-md border border-gray-200'
+                    : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 hover:text-blue-600 shadow-md border border-gray-200 dark:border-gray-700'
                 }`}
               >
                 {category}
@@ -410,7 +410,7 @@ const ParishPage = () => {
             {filteredPhotos.map((photo, index) => (
               <div
                 key={photo.id}
-                className="group relative bg-white rounded-2xl shadow-lg overflow-hidden transform hover:scale-105 transition-all duration-500 cursor-pointer hover:shadow-2xl"
+                className="group relative bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden transform hover:scale-105 transition-all duration-500 cursor-pointer hover:shadow-2xl border border-gray-200 dark:border-gray-700"
                 onClick={() => openGalleryModal(
                   filteredPhotos.map(p => p.image), 
                   index, 
@@ -442,7 +442,7 @@ const ParishPage = () => {
           {filteredPhotos.length === 0 && (
             <div className="text-center py-16">
               <div className="text-6xl mb-4">📷</div>
-              <p className="text-gray-500 text-lg">Nenhuma foto encontrada para esta categoria.</p>
+              <p className="text-gray-500 dark:text-gray-400 text-lg">Nenhuma foto encontrada para esta categoria.</p>
               <button 
                 onClick={() => setSelectedCategory("Todas")}
                 className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors"
@@ -472,11 +472,10 @@ const ParishPage = () => {
       {/* Image Modal */}
       {selectedImage && (
         <ImageModal
-          isOpen={true}
-          onClose={closeImageModal}
           images={selectedImage.images}
-          initialIndex={selectedImage.index}
+          currentIndex={selectedImage.index}
           title={selectedImage.title}
+          onClose={closeImageModal}
         />
       )}
 

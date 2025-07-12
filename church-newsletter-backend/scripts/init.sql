@@ -6,10 +6,10 @@
 
 -- Tabela de usuários com sistema de permissões
 CREATE TABLE IF NOT EXISTS users (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name VARCHAR(100) NOT NULL,
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(100) NOT NULL,
   email VARCHAR(255) NOT NULL UNIQUE,
-  password VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
   role VARCHAR(10) NOT NULL DEFAULT 'common' CHECK (role IN ('admin', 'editor', 'common')),
   is_active BOOLEAN DEFAULT TRUE,
   last_login TIMESTAMP,
@@ -19,10 +19,10 @@ CREATE TABLE IF NOT EXISTS users (
 
 -- Tabela de notícias
 CREATE TABLE IF NOT EXISTS news (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  title VARCHAR(200) NOT NULL,
-  content TEXT NOT NULL,
-  excerpt TEXT,
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title VARCHAR(200) NOT NULL,
+    content TEXT NOT NULL,
+    excerpt TEXT,
   slug VARCHAR(255) UNIQUE NOT NULL,
   is_published BOOLEAN DEFAULT FALSE,
   published_at TIMESTAMP,
@@ -36,11 +36,11 @@ CREATE TABLE IF NOT EXISTS news (
 
 -- Tabela de avisos
 CREATE TABLE IF NOT EXISTS announcements (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  title VARCHAR(200) NOT NULL,
-  content TEXT NOT NULL,
-  week_start DATE NOT NULL,
-  week_end DATE NOT NULL,
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title VARCHAR(200) NOT NULL,
+    content TEXT NOT NULL,
+    week_start DATE NOT NULL,
+    week_end DATE NOT NULL,
   is_published BOOLEAN DEFAULT FALSE,
   published_at TIMESTAMP,
   expires_at TIMESTAMP,
@@ -54,9 +54,9 @@ CREATE TABLE IF NOT EXISTS announcements (
 
 -- Tabela de horários de missa
 CREATE TABLE IF NOT EXISTS mass_schedules (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  day_of_week INTEGER NOT NULL CHECK (day_of_week >= 0 AND day_of_week <= 6),
-  time TIME NOT NULL,
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    day_of_week INTEGER NOT NULL CHECK (day_of_week >= 0 AND day_of_week <= 6),
+    time TIME NOT NULL,
   description TEXT,
   is_active BOOLEAN DEFAULT TRUE,
   order_index INTEGER DEFAULT 0,
@@ -66,9 +66,9 @@ CREATE TABLE IF NOT EXISTS mass_schedules (
 
 -- Tabela de aniversariantes
 CREATE TABLE IF NOT EXISTS birthdays (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name VARCHAR(100) NOT NULL,
-  birth_date DATE NOT NULL,
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(100) NOT NULL,
+    birth_date DATE NOT NULL,
   is_active BOOLEAN DEFAULT TRUE,
   order_index INTEGER DEFAULT 0,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -90,11 +90,11 @@ CREATE TABLE IF NOT EXISTS parish_info (
 
 -- Tabela de dizimistas
 CREATE TABLE IF NOT EXISTS dizimistas (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name VARCHAR(100) NOT NULL,
-  email VARCHAR(255),
-  phone VARCHAR(20),
-  address TEXT,
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(255),
+    phone VARCHAR(20),
+    address TEXT,
   is_active BOOLEAN DEFAULT TRUE,
   order_index INTEGER DEFAULT 0,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -108,8 +108,8 @@ CREATE TABLE IF NOT EXISTS mass_intentions (
   notes TEXT NOT NULL,
   is_recurring BOOLEAN DEFAULT false,
   created_by UUID REFERENCES users(id) ON DELETE SET NULL,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Inserir dados de teste

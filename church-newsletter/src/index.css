@@ -10,7 +10,7 @@
   }
   
   body {
-    @apply bg-gray-50 text-gray-900;
+    @apply bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-200;
   }
 }
 
@@ -24,56 +24,56 @@
   }
   
   .card {
-    @apply bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200;
+    @apply bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 border border-gray-200 dark:border-gray-700;
   }
   
   .section-title {
-    @apply text-2xl md:text-3xl font-bold text-church-blue mb-6 text-center;
+    @apply text-2xl md:text-3xl font-bold text-church-blue dark:text-blue-400 mb-6 text-center;
   }
   
   .section-subtitle {
-    @apply text-lg text-gray-600 mb-8 text-center max-w-3xl mx-auto;
+    @apply text-lg text-gray-600 dark:text-gray-300 mb-8 text-center max-w-3xl mx-auto;
   }
 
   /* Estilos para conteúdo HTML das notícias */
   .news-content {
-    @apply text-gray-700 leading-relaxed;
+    @apply text-gray-700 dark:text-gray-300 leading-relaxed;
   }
 
   .news-content h1 {
-    @apply text-3xl font-bold text-gray-900 mb-4 mt-6;
+    @apply text-3xl font-bold text-gray-900 dark:text-white mb-4 mt-6;
   }
 
   .news-content h2 {
-    @apply text-2xl font-bold text-gray-900 mb-3 mt-5;
+    @apply text-2xl font-bold text-gray-900 dark:text-white mb-3 mt-5;
   }
 
   .news-content h3 {
-    @apply text-xl font-bold text-gray-900 mb-3 mt-4;
+    @apply text-xl font-bold text-gray-900 dark:text-white mb-3 mt-4;
   }
 
   .news-content h4 {
-    @apply text-lg font-bold text-gray-900 mb-2 mt-3;
+    @apply text-lg font-bold text-gray-900 dark:text-white mb-2 mt-3;
   }
 
   .news-content h5 {
-    @apply text-base font-bold text-gray-900 mb-2 mt-3;
+    @apply text-base font-bold text-gray-900 dark:text-white mb-2 mt-3;
   }
 
   .news-content h6 {
-    @apply text-sm font-bold text-gray-900 mb-2 mt-3;
+    @apply text-sm font-bold text-gray-900 dark:text-white mb-2 mt-3;
   }
 
   .news-content p {
-    @apply mb-4 text-gray-700 leading-relaxed;
+    @apply mb-4 text-gray-700 dark:text-gray-300 leading-relaxed;
   }
 
   .news-content ul {
-    @apply mb-4 pl-6 list-disc text-gray-700;
+    @apply mb-4 pl-6 list-disc text-gray-700 dark:text-gray-300;
   }
 
   .news-content ol {
-    @apply mb-4 pl-6 list-decimal text-gray-700;
+    @apply mb-4 pl-6 list-decimal text-gray-700 dark:text-gray-300;
   }
 
   .news-content li {
@@ -81,11 +81,11 @@
   }
 
   .news-content blockquote {
-    @apply border-l-4 border-church-blue pl-4 py-2 my-4 bg-blue-50 italic text-gray-700;
+    @apply border-l-4 border-church-blue dark:border-blue-400 pl-4 py-2 my-4 bg-blue-50 dark:bg-blue-900/20 italic text-gray-700 dark:text-gray-300;
   }
 
   .news-content a {
-    @apply text-church-blue hover:text-blue-800 underline;
+    @apply text-church-blue dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline;
   }
 
   .news-content img {
@@ -93,7 +93,7 @@
   }
 
   .news-content strong {
-    @apply font-bold text-gray-900;
+    @apply font-bold text-gray-900 dark:text-white;
   }
 
   .news-content em {
@@ -109,11 +109,11 @@
   }
 
   .news-content code {
-    @apply bg-gray-100 px-2 py-1 rounded text-sm font-mono;
+    @apply bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded text-sm font-mono;
   }
 
   .news-content pre {
-    @apply bg-gray-100 p-4 rounded-lg overflow-x-auto my-4;
+    @apply bg-gray-100 dark:bg-gray-700 p-4 rounded-lg overflow-x-auto my-4;
   }
 
   .news-content pre code {
@@ -122,29 +122,69 @@
 
   /* Estilos para o editor de texto rico */
   .rich-text-editor .ql-editor {
-    @apply min-h-[300px] text-sm leading-relaxed;
+    @apply min-h-[300px] text-sm leading-relaxed dark:text-gray-100;
   }
   
   .rich-text-editor .ql-toolbar {
-    @apply border-t-2 border-l-2 border-r-2 border-gray-300 rounded-t-lg;
+    @apply border-t-2 border-l-2 border-r-2 border-gray-300 dark:border-gray-600 rounded-t-lg dark:bg-gray-700;
   }
   
   .rich-text-editor .ql-container {
-    @apply border-b-2 border-l-2 border-r-2 border-gray-300 rounded-b-lg;
+    @apply border-b-2 border-l-2 border-r-2 border-gray-300 dark:border-gray-600 rounded-b-lg dark:bg-gray-800;
   }
   
   .rich-text-editor .ql-editor:focus {
-    @apply border-blue-500;
+    @apply border-blue-500 dark:border-blue-400;
     box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
   }
   
   .rich-text-editor .ql-toolbar button:hover,
   .rich-text-editor .ql-toolbar .ql-picker-label:hover {
-    @apply text-blue-600;
+    @apply text-blue-600 dark:text-blue-400;
   }
   
   .rich-text-editor .ql-toolbar button.ql-active,
   .rich-text-editor .ql-toolbar .ql-picker-label.ql-active {
-    @apply text-blue-600;
+    @apply text-blue-600 dark:text-blue-400;
+  }
+
+  /* Estilos para inputs e formulários */
+  input, textarea, select {
+    @apply bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400;
+  }
+
+  input:focus, textarea:focus, select:focus {
+    @apply border-blue-500 dark:border-blue-400 ring-2 ring-blue-500/20 dark:ring-blue-400/20;
+  }
+
+  /* Estilos para tabelas */
+  table {
+    @apply bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600;
+  }
+
+  th {
+    @apply bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-b border-gray-300 dark:border-gray-600;
+  }
+
+  td {
+    @apply border-b border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100;
+  }
+
+  /* Estilos para modais */
+  .modal-overlay {
+    @apply bg-black bg-opacity-50 dark:bg-opacity-70;
+  }
+
+  .modal-content {
+    @apply bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600;
+  }
+
+  /* Estilos para navegação */
+  .nav-link {
+    @apply text-gray-700 dark:text-gray-300 hover:text-church-blue dark:hover:text-blue-400;
+  }
+
+  .nav-link.active {
+    @apply text-church-blue dark:text-blue-400;
   }
 } 

@@ -12,11 +12,11 @@ const NewsSection = () => {
 
   if (loading) {
     return (
-      <section id="news" className="py-20 bg-white">
+      <section id="news" className="py-20 bg-white dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-church-blue mx-auto"></div>
-            <p className="mt-4 text-gray-600">Carregando notícias...</p>
+            <p className="mt-4 text-gray-600 dark:text-gray-300">Carregando notícias...</p>
           </div>
         </div>
       </section>
@@ -25,10 +25,10 @@ const NewsSection = () => {
 
   if (error) {
     return (
-      <section id="news" className="py-20 bg-white">
+      <section id="news" className="py-20 bg-white dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <p className="text-red-600">{error}</p>
+            <p className="text-red-600 dark:text-red-400">{error}</p>
             <button 
               onClick={() => window.location.reload()} 
               className="mt-4 btn-primary"
@@ -42,7 +42,7 @@ const NewsSection = () => {
   }
 
   return (
-    <section id="news" className="py-20 bg-white">
+    <section id="news" className="py-20 bg-white dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="section-title">Últimas Notícias</h2>
@@ -53,7 +53,7 @@ const NewsSection = () => {
 
         {newsArray.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">Nenhuma notícia publicada ainda.</p>
+            <p className="text-gray-500 dark:text-gray-400 text-lg">Nenhuma notícia publicada ainda.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -61,17 +61,17 @@ const NewsSection = () => {
               <Link key={news.id} to={`/noticia/${news.slug}`} className="card overflow-hidden group">
                 <div className="p-6">
                   <div className="flex items-center justify-between mb-3">
-                    <span className="text-sm text-gray-500">
+                    <span className="text-sm text-gray-500 dark:text-gray-400">
                       {new Date(news.createdAt).toLocaleDateString('pt-BR')}
                     </span>
                     {news.author && (
-                      <span className="text-sm text-gray-500">Por {news.author.name}</span>
+                      <span className="text-sm text-gray-500 dark:text-gray-400">Por {news.author.name}</span>
                     )}
                   </div>
-                  <h4 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-church-blue transition-colors">
+                  <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-church-blue dark:group-hover:text-blue-400 transition-colors">
                     {news.title}
                   </h4>
-                  <p className="text-gray-600 leading-relaxed">
+                  <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
                     {news.excerpt || (news.content.length > 150 
                       ? `${news.content.substring(0, 150)}...` 
                       : news.content
@@ -79,11 +79,11 @@ const NewsSection = () => {
                   </p>
                   <div className="mt-4 flex items-center justify-between">
                     {!news.is_published && (
-                      <span className="px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800">
+                      <span className="px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300">
                         Rascunho
                       </span>
                     )}
-                    <span className="text-church-blue text-sm font-medium group-hover:underline">
+                    <span className="text-church-blue dark:text-blue-400 text-sm font-medium group-hover:underline">
                       Ler mais →
                     </span>
                   </div>

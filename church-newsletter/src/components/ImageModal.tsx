@@ -1,14 +1,13 @@
 import { useState, useEffect } from 'react';
 
 interface ImageModalProps {
-  isOpen: boolean;
-  onClose: () => void;
   images: string[];
-  initialIndex?: number;
+  currentIndex: number;
   title?: string;
+  onClose: () => void;
 }
 
-const ImageModal = ({ isOpen, onClose, images, initialIndex = 0, title }: ImageModalProps) => {
+const ImageModal = ({ images, currentIndex: initialIndex, title, onClose }: ImageModalProps) => {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
 
   useEffect(() => {
@@ -17,8 +16,6 @@ const ImageModal = ({ isOpen, onClose, images, initialIndex = 0, title }: ImageM
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (!isOpen) return;
-      
       switch (e.key) {
         case 'Escape':
           onClose();
@@ -34,9 +31,7 @@ const ImageModal = ({ isOpen, onClose, images, initialIndex = 0, title }: ImageM
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, images.length, onClose]);
-
-  if (!isOpen) return null;
+  }, [images.length, onClose]);
 
   const goToPrevious = () => {
     setCurrentIndex(prev => prev > 0 ? prev - 1 : images.length - 1);
@@ -61,7 +56,7 @@ const ImageModal = ({ isOpen, onClose, images, initialIndex = 0, title }: ImageM
           <h3 className="text-xl font-semibold">{title}</h3>
           <button
             onClick={onClose}
-            className="text-white hover:text-gray-300 text-2xl font-bold p-2"
+            className="text-white hover:text-gray-300 text-2xl font-bold p-2 transition-colors"
           >
             ×
           </button>
