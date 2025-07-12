@@ -4,20 +4,38 @@ import 'react-quill/dist/quill.snow.css';
 
 // CSS personalizado para o editor
 const editorStyles = `
-  .rich-text-editor .ql-container {
-    height: calc(100% - 42px);
-    overflow-y: auto;
+  .rich-text-editor {
+    min-height: 500px;
+    resize: vertical;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 500px;
+    max-height: 1200px;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
   }
-  
-  .rich-text-editor .ql-editor {
-    min-height: 100%;
-    font-size: 14px;
-    line-height: 1.6;
-  }
-  
+
   .rich-text-editor .ql-toolbar {
     border-bottom: 1px solid #ccc;
     background: #f8f9fa;
+  }
+
+  .rich-text-editor .ql-container {
+    flex: 1 1 0%;
+    min-height: 0;
+    height: 100%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .rich-text-editor .ql-editor {
+    flex: 1 1 0%;
+    min-height: 200px;
+    font-size: 14px;
+    line-height: 1.6;
+    overflow-y: auto;
   }
 `;
 
@@ -34,9 +52,9 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   value,
   onChange,
   placeholder = 'Digite o conteúdo aqui...',
-  height = '400px',
-  minHeight = '300px',
-  maxHeight = '600px'
+  height = '500px',
+  minHeight = '500px',
+  maxHeight = '1200px'
 }) => {
   const quillRef = useRef<ReactQuill>(null);
 
@@ -68,31 +86,24 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     'link', 'image'
   ];
 
-
-
   return (
     <>
       <style>{editorStyles}</style>
-      <div className="border border-gray-300 rounded-lg overflow-hidden">
-        <div 
-          className="rich-text-editor"
-          style={{ 
-            height: height,
-            minHeight: minHeight,
-            maxHeight: maxHeight
-          }}
-        >
-          <ReactQuill
-            ref={quillRef}
-            theme="snow"
-            value={value}
-            onChange={onChange}
-            modules={modules}
-            formats={formats}
-            placeholder={placeholder}
-          />
-        </div>
-      </div>
+      <ReactQuill
+        ref={quillRef}
+        theme="snow"
+        value={value}
+        onChange={onChange}
+        modules={modules}
+        formats={formats}
+        placeholder={placeholder}
+        className="rich-text-editor"
+        style={{ 
+          height: height,
+          minHeight: minHeight,
+          maxHeight: maxHeight
+        }}
+      />
     </>
   );
 };

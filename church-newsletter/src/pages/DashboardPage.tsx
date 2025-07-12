@@ -1181,15 +1181,10 @@ const NewsForm: React.FC<{
         <label className="block text-sm font-medium text-gray-700 mb-2">
           Conteúdo *
         </label>
-        <div className="border border-gray-300 rounded-lg overflow-hidden">
-          <RichTextEditor
-            value={formData.content}
-            onChange={(html) => setFormData({ ...formData, content: html })}
-            height="400px"
-            minHeight="300px"
-            maxHeight="600px"
-          />
-        </div>
+        <RichTextEditor
+          value={formData.content}
+          onChange={(html) => setFormData({ ...formData, content: html })}
+        />
       </div>
 
       <div className="flex items-center mt-6">
@@ -1287,15 +1282,12 @@ const AnnouncementForm: React.FC<{
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
           Conteúdo *
         </label>
-        <textarea
-          required
+        <RichTextEditor
           value={formData.content}
-          onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-          rows={4}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-church-blue"
+          onChange={(html) => setFormData({ ...formData, content: html })}
         />
       </div>
 
@@ -1481,15 +1473,12 @@ const ParishInfoForm: React.FC<{
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
           Conteúdo *
         </label>
-        <textarea
-          required
+        <RichTextEditor
           value={formData.content}
-          onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-          rows={6}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-church-blue"
+          onChange={(html) => setFormData({ ...formData, content: html })}
         />
       </div>
 
