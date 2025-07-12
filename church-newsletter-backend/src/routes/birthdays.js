@@ -11,7 +11,22 @@ const birthdayValidation = [
     .isLength({ min: 2, max: 100 })
     .withMessage('Nome deve ter entre 2 e 100 caracteres'),
   body('birth_date')
-    .isISO8601()
+    .custom((value) => {
+      // Aceitar tanto formato ISO quanto formato YYYY-MM-DD
+      const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+      const isoRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
+      
+      if (!dateRegex.test(value) && !isoRegex.test(value)) {
+        throw new Error('Data de nascimento deve estar no formato YYYY-MM-DD');
+      }
+      
+      const date = new Date(value);
+      if (isNaN(date.getTime())) {
+        throw new Error('Data de nascimento deve ser uma data válida');
+      }
+      
+      return true;
+    })
     .withMessage('Data de nascimento deve ser uma data válida'),
   body('is_active')
     .optional()

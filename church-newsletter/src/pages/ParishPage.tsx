@@ -7,17 +7,17 @@ const ParishPage = () => {
   const priests = [
     {
       id: 1,
-      name: "Pe. João Silva",
+      name: "Pe. Bruno Moreira",
       role: "Pároco",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=500&fit=crop&crop=face",
-      description: "Ordenado em 2010, dedica-se ao ministério paroquial com amor e dedicação. Especialista em teologia pastoral e apaixonado pela juventude.",
+      image: "https://firebasestorage.googleapis.com/v0/b/clone-driver-fcb47.appspot.com/o/igreja%2Fpadres%2FCaptura%20de%20tela%202025-07-12%20172654.png?alt=media&token=a98f7961-19b9-4dae-8a08-123dee49a3cd",
+      description: "Dedica-se ao ministério paroquial com amor e dedicação. Especialista em teologia pastoral e apaixonado pela juventude.",
       specialties: ["Pastoral Juvenil", "Teologia", "Aconselhamento"]
     },
     {
       id: 2,
-      name: "Pe. Carlos Oliveira",
-      role: "Vigário",
-      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=500&fit=crop&crop=face",
+      name: "Pe. Abel Jakson",
+      role: "Padre Emérito",
+      image: "https://firebasestorage.googleapis.com/v0/b/clone-driver-fcb47.appspot.com/o/igreja%2Fpadres%2FCaptura%20de%20tela%202025-07-12%20172931.png?alt=media&token=9a79b262-d010-4893-9a2a-93f8494a3917",
       description: "Missionário por vocação, trabalha incansavelmente pela evangelização e formação de líderes comunitários.",
       specialties: ["Missões", "Formação", "Comunidade"]
     }
@@ -26,19 +26,11 @@ const ParishPage = () => {
   const deacons = [
     {
       id: 1,
-      name: "Diácono José Santos",
+      name: "Diácono Francisco Rodrigues",
       role: "Diácono Permanente",
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=500&fit=crop&crop=face",
+      image: "https://firebasestorage.googleapis.com/v0/b/clone-driver-fcb47.appspot.com/o/igreja%2Fpadres%2FCaptura%20de%20tela%202025-07-12%20172920.png?alt=media&token=43e5b9ae-42de-4c46-a463-6cc70610e445",
       description: "Servidor dedicado da comunidade, coordena ações sociais e ministra o batismo e matrimônio.",
       specialties: ["Ação Social", "Liturgia", "Família"]
-    },
-    {
-      id: 2,
-      name: "Diácono Pedro Costa",
-      role: "Diácono Permanente",
-      image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=500&fit=crop&crop=face",
-      description: "Especialista em catequese e formação de adultos, dedica-se ao ensino da doutrina cristã.",
-      specialties: ["Catequese", "Formação", "Ensino"]
     }
   ];
 
@@ -104,7 +96,7 @@ const ParishPage = () => {
     {
       id: 1,
       title: "Fachada da Igreja",
-      image: "https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=800&h=600&fit=crop",
+      image: "https://firebasestorage.googleapis.com/v0/b/clone-driver-fcb47.appspot.com/o/igreja%2Fpadres%2FCaptura%20de%20tela%202025-07-12%20173121.png?alt=media&token=d1c417e9-5370-4d0d-9a7c-4b031627066d",
       category: "Igreja"
     },
     {

@@ -122,6 +122,24 @@ const createCrudController = (Model, options = {}) => {
         }
       }
       
+      // Tratamento específico para Birthday - normalizar data de nascimento
+      if (Model.name === 'Birthday' && data.birth_date) {
+        // Garantir que a data seja tratada no fuso horário de Brasília
+        const date = new Date(data.birth_date);
+        if (!isNaN(date.getTime())) {
+          // Ajustar para o fuso horário de Brasília (UTC-3)
+          const brasiliaOffset = -3 * 60; // -3 horas em minutos
+          const utcTime = date.getTime() + (date.getTimezoneOffset() * 60000);
+          const brasiliaTime = utcTime + (brasiliaOffset * 60000);
+          const brasiliaDate = new Date(brasiliaTime);
+          
+          const year = brasiliaDate.getFullYear();
+          const month = String(brasiliaDate.getMonth() + 1).padStart(2, '0');
+          const day = String(brasiliaDate.getDate()).padStart(2, '0');
+          data.birth_date = `${year}-${month}-${day}`;
+        }
+      }
+      
       // Adicionar created_by se o modelo suportar
       if (Model.rawAttributes.created_by && req.user) {
         data.created_by = req.user.id;
@@ -173,6 +191,24 @@ const createCrudController = (Model, options = {}) => {
             success: false,
             message: 'day_of_week deve ser um número entre 0 e 6'
           });
+        }
+      }
+
+      // Tratamento específico para Birthday - normalizar data de nascimento
+      if (Model.name === 'Birthday' && data.birth_date) {
+        // Garantir que a data seja tratada no fuso horário de Brasília
+        const date = new Date(data.birth_date);
+        if (!isNaN(date.getTime())) {
+          // Ajustar para o fuso horário de Brasília (UTC-3)
+          const brasiliaOffset = -3 * 60; // -3 horas em minutos
+          const utcTime = date.getTime() + (date.getTimezoneOffset() * 60000);
+          const brasiliaTime = utcTime + (brasiliaOffset * 60000);
+          const brasiliaDate = new Date(brasiliaTime);
+          
+          const year = brasiliaDate.getFullYear();
+          const month = String(brasiliaDate.getMonth() + 1).padStart(2, '0');
+          const day = String(brasiliaDate.getDate()).padStart(2, '0');
+          data.birth_date = `${year}-${month}-${day}`;
         }
       }
 

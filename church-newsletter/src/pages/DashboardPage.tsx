@@ -546,11 +546,21 @@ const DashboardPage = () => {
                 body { font-family: Arial, sans-serif; margin: 20px; }
                 .header { text-align: center; margin-bottom: 30px; }
                 .info { margin-bottom: 20px; }
-                .schedule-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-                .day-schedule { border: 1px solid #ddd; border-radius: 8px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
-                .day-title { font-size: 18px; font-weight: bold; margin-bottom: 15px; text-align: center; }
-                .mass-time { background: rgba(255,255,255,0.2); padding: 10px; margin: 8px 0; border-radius: 5px; text-align: center; }
-                .mass-description { font-size: 14px; margin-top: 5px; opacity: 0.9; }
+                table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+                th { background-color: #f8f9fa; font-weight: bold; color: #333; }
+                tr:nth-child(even) { background-color: #f9f9f9; }
+                tr:hover { background-color: #f5f5f5; }
+                .day-badge { 
+                  background-color: #007bff; 
+                  color: white; 
+                  padding: 4px 8px; 
+                  border-radius: 4px; 
+                  font-size: 12px; 
+                  font-weight: bold; 
+                }
+                .time { font-weight: bold; color: #007bff; }
+                .description { color: #666; font-style: italic; }
               </style>
             </head>
             <body>
@@ -562,24 +572,38 @@ const DashboardPage = () => {
                 <p><strong>Gerado em:</strong> ${data.generatedAt}</p>
                 <p><strong>Total de horários:</strong> ${data.total}</p>
               </div>
-              <div class="schedule-grid">
-                ${['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'].map((dayName, index) => {
-                  const daySchedules = data.items.filter((schedule) => schedule.day_of_week === index);
-                  if (daySchedules.length === 0) return '';
-                  
-                  return `
-                    <div class="day-schedule">
-                      <div class="day-title">${dayName}</div>
-                      ${daySchedules.map((schedule) => `
-                        <div class="mass-time">
-                          <strong>${schedule.time}</strong>
-                          ${schedule.description ? `<div class="mass-description">${schedule.description}</div>` : ''}
-                        </div>
-                      `).join('')}
-                    </div>
-                  `;
-                }).join('')}
-              </div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Dia</th>
+                    <th>Horário</th>
+                    <th>Observação</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${data.items
+                    .sort((a, b) => {
+                      // Primeiro ordena por dia da semana (0=domingo, 1=segunda, etc.)
+                      if (a.day_of_week !== b.day_of_week) {
+                        return a.day_of_week - b.day_of_week;
+                      }
+                      // Se for o mesmo dia, ordena por hora
+                      return a.time.localeCompare(b.time);
+                    })
+                    .map((schedule) => {
+                      const dayNames = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+                      const dayName = dayNames[schedule.day_of_week] || 'Desconhecido';
+                      
+                      return `
+                        <tr>
+                          <td><span class="day-badge">${dayName}</span></td>
+                          <td class="time">${schedule.time}</td>
+                          <td class="description">${schedule.description || 'Missão regular'}</td>
+                        </tr>
+                      `;
+                    }).join('')}
+                </tbody>
+              </table>
             </body>
           </html>
         `);
@@ -1635,7 +1659,11 @@ const BirthdayForm: React.FC<{
   const formatDateForInput = (dateString: string) => {
     if (!dateString) return '';
     const date = new Date(dateString);
-    return date.toISOString().split('T')[0];
+    // Usar toLocaleDateString para evitar problemas de fuso horário
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   };
 
   const [formData, setFormData] = useState({

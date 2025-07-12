@@ -7,6 +7,7 @@ Sistema completo de newsletter da paróquia com frontend React, backend Node.js 
 ### Pré-requisitos
 - Docker Desktop instalado e rodando
 - Git
+- projeto clone-driver no firebase para gerir o storage do site
 
 ### Executar o Sistema Completo
 

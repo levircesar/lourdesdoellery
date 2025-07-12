@@ -12,9 +12,9 @@ const CommunitiesPage = () => {
       description: "A Comunidade Católica Shalom é uma associação privada de fiéis de direito pontifício, fundada em 1982, que tem como carisma a evangelização dos jovens e a promoção da paz. Nossa missão é anunciar o Evangelho com alegria e simplicidade, levando a todos a experiência do amor de Deus.",
       longDescription: "A Comunidade Católica Shalom nasceu do coração de Deus para evangelizar os jovens e promover a paz. Fundada em Fortaleza em 1982, a Comunidade tem como carisma específico a evangelização dos jovens e a promoção da paz. Nossa espiritualidade é marcada pela alegria, simplicidade e profunda intimidade com Deus. Através de encontros, retiros, missões e formações, levamos a todos a experiência transformadora do amor de Deus. A Comunidade Shalom está presente em mais de 30 países, sempre fiel ao seu carisma de evangelizar com alegria e promover a paz no mundo.",
       images: [
-        "https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=800&h=600&fit=crop",
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=600&fit=crop",
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=800&h=600&fit=crop"
+        "https://firebasestorage.googleapis.com/v0/b/clone-driver-fcb47.appspot.com/o/igreja%2Fshalom%2FMoyses-Azevedo-shalom.jpg?alt=media&token=6e9d41f5-a257-4dc9-b6d8-1e2f9a10a4ac",
+        "https://firebasestorage.googleapis.com/v0/b/clone-driver-fcb47.appspot.com/o/igreja%2Fshalom%2Fchannels4_profile%20(1).jpg?alt=media&token=7d6f6a9c-4a16-4c19-baaf-ddb8f7a5ffbb",
+        "https://firebasestorage.googleapis.com/v0/b/clone-driver-fcb47.appspot.com/o/igreja%2Fshalom%2Firpc-2-667x500.jpg?alt=media&token=b64b8209-b105-48c5-8cdc-1f2bb5a03803"
       ],
       meetingPlaces: [
         {
@@ -51,9 +51,9 @@ const CommunitiesPage = () => {
       description: "A Comunidade Fanuel é uma comunidade católica dedicada à missão e adoração, com foco na formação espiritual e no serviço aos mais necessitados. Nossa vocação é ser instrumentos de Deus para transformar vidas através da oração e da caridade.",
       longDescription: "A Comunidade Católica de Missão e Adoração Fanuel foi fundada com o propósito de ser um espaço de encontro com Deus através da oração, adoração e missão. Nossa espiritualidade é centrada na Eucaristia e na devoção a Maria. A comunidade tem como pilares a oração constante, a formação espiritual sólida e o serviço aos mais necessitados. Realizamos missões evangelizadoras, retiros de formação, encontros de oração e ações sociais que transformam vidas e comunidades. Nossa missão é levar a todos a experiência do amor misericordioso de Deus, especialmente aos que mais precisam de acolhimento e esperança.",
       images: [
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=600&fit=crop",
-        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=800&h=600&fit=crop",
-        "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=800&h=600&fit=crop"
+        "https://firebasestorage.googleapis.com/v0/b/clone-driver-fcb47.appspot.com/o/igreja%2Ffanuel%2F13690935_641520269337918_9184058997700393374_o-e1474951402822.webp?alt=media&token=dd367ad6-044a-4483-b13d-fc46e3050383",
+        "https://firebasestorage.googleapis.com/v0/b/clone-driver-fcb47.appspot.com/o/igreja%2Ffanuel%2Fccmaf.jpg?alt=media&token=fa6a869b-4e1d-40dd-8d76-25277990b92e",
+        "https://firebasestorage.googleapis.com/v0/b/clone-driver-fcb47.appspot.com/o/igreja%2Ffanuel%2Fimages.jpg?alt=media&token=be0dc341-1555-4d73-8f55-cde5fa2fccbf"
       ],
       meetingPlaces: [
         {
@@ -79,45 +79,6 @@ const CommunitiesPage = () => {
         phone: "(85) 88888-8888",
         email: "fanuel@fortaleza.com",
         website: "www.comfanuel.org"
-      },
-      color: "bg-purple-600",
-      icon: "🙏"
-    },
-    {
-      id: 3,
-      name: "Amigos de Maria",
-      location: "Fortaleza, Ceará",
-      description: "Os amigos de Maria tem foco na formação espiritual e no serviço aos mais necessitados. Nossa vocação é ser instrumentos de Deus para transformar vidas através da oração e da caridade.",
-      longDescription: "Fundada com o propósito de ser um espaço de encontro com Deus através da oração, adoração e missão. Nossa espiritualidade é centrada na Eucaristia e na devoção a Maria. A comunidade tem como pilares a oração constante, a formação espiritual sólida e o serviço aos mais necessitados. Realizamos missões evangelizadoras, retiros de formação, encontros de oração e ações sociais que transformam vidas e comunidades. Nossa missão é levar a todos a experiência do amor misericordioso de Deus, especialmente aos que mais precisam de acolhimento e esperança.",
-      images: [
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=600&fit=crop",
-        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=800&h=600&fit=crop",
-        "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=800&h=600&fit=crop"
-      ],
-      meetingPlaces: [
-        {
-          name: "Igreja",
-          address: "Rua da Paz, 789 - Aldeota, Fortaleza",
-          schedule: "Segundas e Quartas às 20h"
-        },
-        {
-          name: "Capela Nossa Senhora das Graças",
-          address: "Av. Santos Dumont, 321 - Dionísio Torres, Fortaleza",
-          schedule: "Sábados às 16h"
-        }
-      ],
-      activities: [
-        "Adoração Eucarística",
-        "Missões Evangelizadoras",
-        "Formação Espiritual",
-        "Grupos de Oração",
-        "Ações de Caridade",
-        "Retiros de Conversão"
-      ],
-      contact: {
-        phone: "(85) 88888-8888",
-        email: "fanuel@fortaleza.com",
-        website: "www.amigosmaria.org"
       },
       color: "bg-purple-600",
       icon: "🙏"
